@@ -1,6 +1,6 @@
 # Social Support Application
 
-Phase 1 establishes the project foundation for a government social support application.
+This project is being integrated phase by phase for a government social support application.
 
 ## Current Phase
 
@@ -12,11 +12,11 @@ Completed:
 - English and Arabic localized routes
 - RTL/LTR layout behavior
 - Core dependencies for later form, validation, AI, and testing phases
+- Phase 2 form domain model, Zod schema, step metadata, wizard shell, progress indicator, active-step validation, focus handling, and error summary
 
 Not implemented yet:
 
-- Multi-step form wizard
-- Form validation
+- Detailed step field UIs
 - Local draft persistence
 - Mock submission API
 - OpenAI suggestion API
