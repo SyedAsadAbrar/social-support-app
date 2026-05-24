@@ -1,0 +1,10 @@
+{
+  "foundation": {
+    "eyebrow": "Social Support Portal",
+    "title": "Financial assistance application",
+    "description": "Phase 1 is ready: the Next.js App Router foundation, TypeScript, Tailwind styling, localization, and English/Arabic route structure are in place.",
+    "phaseTitle": "Phase 1 foundation",
+    "phaseDescription": "The form wizard, validation, local draft persistence, mock submission, and AI assistance will be integrated in later phases.",
+    "languageNav": "Language switcher"
+  }
+}

@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  background: #f8faf9;
+  color: #182033;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(238, 243, 247, 0.95), rgba(248, 250, 249, 1) 320px),
+    #f8faf9;
+  color: #182033;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid #235789;
+  outline-offset: 3px;
+}
+
+[dir="rtl"] {
+  font-family: Tahoma, Arial, system-ui, sans-serif;
+}
