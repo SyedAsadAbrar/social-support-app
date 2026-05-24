@@ -1,20 +1,21 @@
 import {ArrowRight, CheckCircle2, Clock3, Languages, ShieldCheck} from "lucide-react";
 import Link from "next/link";
-import {useTranslations} from "next-intl";
-import {setRequestLocale} from "next-intl/server";
+import {getTranslations, setRequestLocale} from "next-intl/server";
 import type {Locale} from "@/i18n/config";
 
 type LandingPageProps = {
-  params: {
+  params: Promise<{
     locale: Locale;
-  };
+  }>;
 };
 
-export default function LandingPage({params}: LandingPageProps) {
-  setRequestLocale(params.locale);
+export default async function LandingPage({params}: LandingPageProps) {
+  const {locale} = await params;
 
-  const t = useTranslations("landing");
-  const otherLocale = params.locale === "en" ? "ar" : "en";
+  setRequestLocale(locale);
+
+  const t = await getTranslations("landing");
+  const otherLocale = locale === "en" ? "ar" : "en";
 
   const highlights = [
     {
@@ -44,7 +45,7 @@ export default function LandingPage({params}: LandingPageProps) {
         <div aria-hidden="true" className="absolute inset-0 bg-[#10242d]/60" />
 
         <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
-          <Link href={`/${params.locale}`} className="text-sm font-bold uppercase tracking-wide">
+          <Link href={`/${locale}`} className="text-sm font-bold uppercase tracking-wide">
             {t("brand")}
           </Link>
           <Link
@@ -52,7 +53,7 @@ export default function LandingPage({params}: LandingPageProps) {
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-white/35 bg-white/10 px-3 py-2 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/20"
           >
             <Languages aria-hidden="true" size={17} />
-            {params.locale === "en" ? "العربية" : "English"}
+            {locale === "en" ? "العربية" : "English"}
           </Link>
         </nav>
 
@@ -69,7 +70,7 @@ export default function LandingPage({params}: LandingPageProps) {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href={`/${params.locale}/apply`}
+                href={`/${locale}/apply`}
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-white px-5 py-3 text-base font-bold text-[#19323c] shadow-lg transition hover:bg-mist"
               >
                 {t("start")}

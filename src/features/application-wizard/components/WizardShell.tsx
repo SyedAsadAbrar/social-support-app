@@ -5,7 +5,7 @@ import {ArrowLeft, ArrowRight, Languages} from "lucide-react";
 import Link from "next/link";
 import {useTranslations} from "next-intl";
 import {useEffect, useMemo, useRef, useState} from "react";
-import {FormProvider, useForm} from "react-hook-form";
+import {FormProvider, useForm, useWatch} from "react-hook-form";
 import type {Locale} from "@/i18n/config";
 import {loadDraft, saveDraft} from "@/lib/storage";
 import {defaultApplicationValues} from "../defaults";
@@ -34,11 +34,12 @@ export function WizardShell({locale}: WizardShellProps) {
   });
 
   const {
+    control,
     formState: {errors},
     reset,
-    trigger,
-    watch
+    trigger
   } = methods;
+  const watchedValues = useWatch({control});
 
   const stepLabels = useMemo(
     () => stepTranslationKeys.map((key) => t(`steps.${key}`)),
@@ -59,14 +60,10 @@ export function WizardShell({locale}: WizardShellProps) {
   }, [reset]);
 
   useEffect(() => {
-    const subscription = watch((values) => {
-      if (hasLoadedDraft.current) {
-        saveDraft(values);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [watch]);
+    if (hasLoadedDraft.current) {
+      saveDraft(watchedValues);
+    }
+  }, [watchedValues]);
 
   const activeFieldNames = stepFields[currentStep];
   const activeErrors = activeFieldNames

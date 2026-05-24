@@ -12,9 +12,12 @@ export function ProgressStepper({
   progressLabel
 }: ProgressStepperProps) {
   const stepCount = labels.length;
-  const completedSegments = Math.max(currentStep, 0);
+  const safeCurrentStep = Math.min(Math.max(currentStep, 0), Math.max(stepCount - 1, 0));
+  const completedSegments = safeCurrentStep;
   const totalSegments = Math.max(stepCount - 1, 1);
   const progressPercent = Math.round((completedSegments / totalSegments) * 100);
+  const edgeOffsetPercent = stepCount > 0 ? 50 / stepCount : 0;
+  const trackFillPercent = (progressPercent / 100) * (100 - edgeOffsetPercent * 2);
 
   return (
     <nav
@@ -26,19 +29,29 @@ export function ProgressStepper({
         <p className="text-sm font-bold text-civic">{progressPercent}%</p>
       </div>
 
-      <ol className="relative mt-5 grid grid-cols-3 gap-2">
+      <ol
+        className="relative mt-5 grid gap-2"
+        style={{gridTemplateColumns: `repeat(${stepCount}, minmax(0, 1fr))`}}
+      >
         <span
           aria-hidden="true"
-          className="absolute left-[16.666%] right-[16.666%] top-5 h-0.5 bg-slate-300"
+          className="absolute top-5 h-0.5 bg-slate-300"
+          style={{
+            left: `${edgeOffsetPercent}%`,
+            right: `${edgeOffsetPercent}%`
+          }}
         />
         <span
           aria-hidden="true"
-          className="absolute left-[16.666%] top-5 h-0.5 bg-civic transition-[width] duration-300 ease-out"
-          style={{width: `${progressPercent * (2 / 3)}%`}}
+          className="absolute top-5 h-0.5 bg-civic transition-[width] duration-300 ease-out"
+          style={{
+            left: `${edgeOffsetPercent}%`,
+            width: `${trackFillPercent}%`
+          }}
         />
         {labels.map((label, index) => {
-          const isCurrent = index === currentStep;
-          const isComplete = index < currentStep;
+          const isCurrent = index === safeCurrentStep;
+          const isComplete = index < safeCurrentStep;
 
           return (
             <li key={label} className="relative min-w-0">

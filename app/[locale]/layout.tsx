@@ -2,13 +2,14 @@ import {NextIntlClientProvider} from "next-intl";
 import {getMessages} from "next-intl/server";
 import {setRequestLocale} from "next-intl/server";
 import {notFound} from "next/navigation";
+import type {ReactNode} from "react";
 import {locales, type Locale} from "@/i18n/config";
 
 type LocaleLayoutProps = {
-  children: React.ReactNode;
-  params: {
-    locale: Locale;
-  };
+  children: ReactNode;
+  params: Promise<{
+    locale: string;
+  }>;
 };
 
 export function generateStaticParams() {
@@ -19,18 +20,22 @@ export default async function LocaleLayout({
   children,
   params
 }: LocaleLayoutProps) {
-  if (!locales.includes(params.locale)) {
+  const {locale} = await params;
+
+  if (!locales.includes(locale as Locale)) {
     notFound();
   }
 
-  setRequestLocale(params.locale);
+  const validLocale = locale as Locale;
+
+  setRequestLocale(validLocale);
 
   const messages = await getMessages();
-  const dir = params.locale === "ar" ? "rtl" : "ltr";
+  const dir = validLocale === "ar" ? "rtl" : "ltr";
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <div lang={params.locale} dir={dir} className="min-h-screen">
+      <div lang={validLocale} dir={dir} className="min-h-screen">
         {children}
       </div>
     </NextIntlClientProvider>

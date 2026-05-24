@@ -3,13 +3,15 @@ import {WizardShell} from "@/features/application-wizard/components/WizardShell"
 import type {Locale} from "@/i18n/config";
 
 type ApplyPageProps = {
-  params: {
+  params: Promise<{
     locale: Locale;
-  };
+  }>;
 };
 
-export default function ApplyPage({params}: ApplyPageProps) {
-  setRequestLocale(params.locale);
+export default async function ApplyPage({params}: ApplyPageProps) {
+  const {locale} = await params;
 
-  return <WizardShell locale={params.locale} />;
+  setRequestLocale(locale);
+
+  return <WizardShell locale={locale} />;
 }
