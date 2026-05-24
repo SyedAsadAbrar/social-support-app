@@ -10,7 +10,7 @@
   "form": {
     "eyebrow": "Social Support Portal",
     "title": "Financial assistance application",
-    "description": "Complete the application in three guided sections. Phase 2 adds the wizard structure and validation contract; detailed fields arrive in Phase 3.",
+    "description": "Complete the application in three guided sections. Your progress is saved automatically on this device as you move through the form.",
     "steps": {
       "personal": "Personal Information",
       "family": "Family & Financial Info",
@@ -21,10 +21,6 @@
       "next": "Next",
       "select": "Select an option",
       "stepCount": "Step {current} of {total}"
-    },
-    "phase2": {
-      "placeholderTitle": "Step form placeholder",
-      "placeholderDescription": "The wizard shell, progress indicator, active-step validation, focus handling, and error summary are ready. The actual fields for this step will be added in Phase 3."
     },
     "fields": {
       "name": "Name",
