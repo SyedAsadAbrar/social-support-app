@@ -134,7 +134,7 @@ export function WizardShell({locale}: WizardShellProps) {
           >
             <section aria-labelledby="step-heading" className="grid gap-5">
               <div>
-                <p className="text-sm font-semibold text-action">
+                <p className="text-sm font-semibold text-civic">
                   {t("common.stepCount", {
                     current: currentStep + 1,
                     total: stepLabels.length
@@ -187,7 +187,7 @@ export function WizardShell({locale}: WizardShellProps) {
                 type="button"
                 onClick={goNext}
                 disabled={currentStep === stepLabels.length - 1}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-action px-5 py-2 text-sm font-semibold text-white hover:bg-action/90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-civic px-5 py-2 text-sm font-semibold text-white hover:bg-civic/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {t("common.next")}
                 <ArrowRight aria-hidden="true" size={18} />

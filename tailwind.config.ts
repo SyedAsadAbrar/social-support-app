@@ -18,14 +18,16 @@ const config: Config = {
         ]
       },
       colors: {
-        ink: "#182033",
-        mist: "#eef3f7",
-        civic: "#17635a",
-        action: "#235789",
+        ink: "#17231f",
+        mist: "#edf7f2",
+        civic: "#166534",
+        civicDark: "#0f3d24",
+        civicSoft: "#dcfce7",
+        action: "#166534",
         alert: "#b4443a"
       },
       boxShadow: {
-        panel: "0 18px 60px rgba(24, 32, 51, 0.12)"
+        panel: "0 18px 60px rgba(22, 101, 52, 0.12)"
       }
     }
   },

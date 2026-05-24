@@ -63,7 +63,7 @@ export function TextField({
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
-        className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-action"
+        className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
         {...register(name, {
           setValueAs: (value) => {
             if (type !== "number") {
@@ -123,7 +123,7 @@ export function SelectField({
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
-        className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-action"
+        className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
         {...register(name)}
       >
         <option value="">{placeholder}</option>
@@ -179,7 +179,7 @@ export function TextAreaField({
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
-        className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-action"
+        className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
         {...register(name)}
       />
       {helper ? (

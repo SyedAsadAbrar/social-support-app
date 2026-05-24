@@ -36,13 +36,13 @@ export default async function LandingPage({params}: LandingPageProps) {
   ];
 
   return (
-    <main className="min-h-screen bg-[#f8faf9] text-ink">
-      <section className="relative isolate min-h-[92vh] overflow-hidden bg-[#19323c] text-white">
+    <main className="min-h-screen bg-mist text-ink">
+      <section className="relative isolate min-h-[92vh] overflow-hidden bg-civicDark text-white">
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=2200&q=85')] bg-cover bg-center opacity-40"
         />
-        <div aria-hidden="true" className="absolute inset-0 bg-[#10242d]/60" />
+        <div aria-hidden="true" className="absolute inset-0 bg-civicDark/70" />
 
         <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <Link href={`/${locale}`} className="text-sm font-bold uppercase tracking-wide">
@@ -71,7 +71,7 @@ export default async function LandingPage({params}: LandingPageProps) {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={`/${locale}/apply`}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-white px-5 py-3 text-base font-bold text-[#19323c] shadow-lg transition hover:bg-mist"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-white px-5 py-3 text-base font-bold text-civicDark shadow-lg transition hover:bg-mist"
               >
                 {t("start")}
                 <ArrowRight aria-hidden="true" size={19} />
@@ -97,7 +97,7 @@ export default async function LandingPage({params}: LandingPageProps) {
                 key={item.title}
                 className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-md bg-mist text-action">
+                <div className="flex h-11 w-11 items-center justify-center rounded-md bg-civicSoft text-civic">
                   <Icon aria-hidden="true" size={22} />
                 </div>
                 <h2 className="mt-4 text-xl font-bold text-ink">{item.title}</h2>
