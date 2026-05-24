@@ -15,6 +15,7 @@ Completed:
 - Phase 2 form domain model, Zod schema, step metadata, wizard shell, progress indicator, active-step validation, focus handling, and error summary
 - Phase 3 responsive Step 1, Step 2, and Step 3 form fields with localized labels, helpers, options, and field-level validation messages
 - Phase 4 versioned `localStorage` draft persistence with restore-on-load autosave
+- Localized responsive landing page at `/en` and `/ar` with a start application CTA
 
 Not implemented yet:
 

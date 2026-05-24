@@ -7,6 +7,28 @@
     "phaseDescription": "The form wizard, validation, local draft persistence, mock submission, and AI assistance will be integrated in later phases.",
     "languageNav": "Language switcher"
   },
+  "landing": {
+    "brand": "Social Support Portal",
+    "eyebrow": "Financial assistance",
+    "title": "Apply for support with a clear guided form.",
+    "description": "Start a secure application, move through each section at your pace, and return later with your progress saved on this device.",
+    "start": "Start application",
+    "learnMore": "View overview",
+    "highlights": {
+      "fast": {
+        "title": "Step-by-step",
+        "description": "The application is organized into personal, family, financial, and situation sections."
+      },
+      "secure": {
+        "title": "Private by design",
+        "description": "Your draft is stored locally in your browser until the mock submission flow is added."
+      },
+      "guided": {
+        "title": "Ready for smart help",
+        "description": "The form structure is prepared for AI writing assistance in the situation section."
+      }
+    }
+  },
   "form": {
     "eyebrow": "Social Support Portal",
     "title": "Financial assistance application",
@@ -20,6 +42,7 @@
       "back": "Back",
       "next": "Next",
       "select": "Select an option",
+      "progress": "Application progress",
       "stepCount": "Step {current} of {total}"
     },
     "fields": {
