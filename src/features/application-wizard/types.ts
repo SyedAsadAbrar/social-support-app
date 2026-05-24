@@ -1,4 +1,4 @@
-export type Gender = "male" | "female" | "nonBinary" | "preferNotToSay";
+export type Gender = "male" | "female" | "preferNotToSay";
 
 export type MaritalStatus = "single" | "married" | "divorced" | "widowed";
 

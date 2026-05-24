@@ -25,6 +25,7 @@ export function WizardShell({locale}: WizardShellProps) {
   const t = useTranslations("form");
   const [currentStep, setCurrentStep] = useState(0);
   const hasLoadedDraft = useRef(false);
+  const hasNavigatedSteps = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const methods = useForm<ApplicationForm>({
@@ -47,7 +48,9 @@ export function WizardShell({locale}: WizardShellProps) {
   );
 
   useEffect(() => {
-    stepHeadingRef.current?.focus();
+    if (hasNavigatedSteps.current) {
+      stepHeadingRef.current?.focus();
+    }
   }, [currentStep]);
 
   useEffect(() => {
@@ -78,11 +81,13 @@ export function WizardShell({locale}: WizardShellProps) {
   async function goNext() {
     const valid = await trigger(activeFieldNames, {shouldFocus: true});
     if (valid) {
+      hasNavigatedSteps.current = true;
       setCurrentStep((step) => Math.min(step + 1, stepLabels.length - 1));
     }
   }
 
   function goBack() {
+    hasNavigatedSteps.current = true;
     setCurrentStep((step) => Math.max(step - 1, 0));
   }
 

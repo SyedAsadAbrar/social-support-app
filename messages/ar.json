@@ -77,8 +77,7 @@
       "gender": {
         "female": "أنثى",
         "male": "ذكر",
-        "nonBinary": "غير ثنائي",
-        "preferNotToSay": "أفضل عدم الإفصاح"
+        "preferNotToSay": "عدم التحديد"
       },
       "maritalStatus": {
         "single": "أعزب",

@@ -23,12 +23,14 @@ type BaseFieldProps = {
   label: string;
   helper?: string;
   errorText: (key: string) => string;
+  required?: boolean;
 };
 
 type TextFieldProps = BaseFieldProps & {
   type?: "text" | "email" | "tel" | "date" | "number";
   autoComplete?: string;
   inputMode?: "text" | "email" | "tel" | "numeric" | "decimal";
+  max?: string;
 };
 
 export function TextField({
@@ -38,6 +40,8 @@ export function TextField({
   type = "text",
   autoComplete,
   inputMode,
+  max,
+  required = true,
   errorText
 }: TextFieldProps) {
   const id = useId();
@@ -53,12 +57,19 @@ export function TextField({
     <div className="space-y-2">
       <label className="block text-sm font-semibold text-ink" htmlFor={id}>
         {label}
+        {required ? (
+          <span className="ml-1 text-alert" aria-label="required">
+            *
+          </span>
+        ) : null}
       </label>
       <input
         id={id}
         type={type}
         autoComplete={autoComplete}
         inputMode={inputMode}
+        max={max}
+        required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
@@ -101,6 +112,7 @@ export function SelectField({
   placeholder,
   options,
   optionLabel,
+  required = true,
   errorText
 }: SelectFieldProps) {
   const id = useId();
@@ -116,9 +128,15 @@ export function SelectField({
     <div className="space-y-2">
       <label className="block text-sm font-semibold text-ink" htmlFor={id}>
         {label}
+        {required ? (
+          <span className="ml-1 text-alert" aria-label="required">
+            *
+          </span>
+        ) : null}
       </label>
       <select
         id={id}
+        required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
@@ -156,6 +174,7 @@ export function TextAreaField({
   label,
   helper,
   rows = 5,
+  required = true,
   errorText
 }: TextAreaFieldProps) {
   const id = useId();
@@ -171,10 +190,16 @@ export function TextAreaField({
     <div className="space-y-2">
       <label className="block text-sm font-semibold text-ink" htmlFor={id}>
         {label}
+        {required ? (
+          <span className="ml-1 text-alert" aria-label="required">
+            *
+          </span>
+        ) : null}
       </label>
       <textarea
         id={id}
         rows={rows}
+        required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)

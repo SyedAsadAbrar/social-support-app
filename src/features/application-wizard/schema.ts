@@ -28,14 +28,19 @@ const situationText = z
   .min(30, "descriptionTooShort")
   .max(1200, "descriptionTooLong");
 
+function yesterdayDateString() {
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  return date.toISOString().slice(0, 10);
+}
+
 export const applicationSchema = z.object({
   name: requiredText(120),
   nationalId: requiredText(40).regex(/^[A-Za-z0-9-]{5,40}$/, "invalidNationalId"),
   dateOfBirth: requiredText(20).refine((value) => {
-    const date = new Date(value);
-    return Number.isFinite(date.getTime()) && date < new Date();
+    return value <= yesterdayDateString();
   }, "invalidDate"),
-  gender: z.enum(["male", "female", "nonBinary", "preferNotToSay"], {
+  gender: z.enum(["male", "female", "preferNotToSay"], {
     required_error: "required",
     invalid_type_error: "required"
   }),

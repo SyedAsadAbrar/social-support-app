@@ -77,8 +77,7 @@
       "gender": {
         "female": "Female",
         "male": "Male",
-        "nonBinary": "Non-binary",
-        "preferNotToSay": "Prefer not to say"
+        "preferNotToSay": "Do not specify"
       },
       "maritalStatus": {
         "single": "Single",

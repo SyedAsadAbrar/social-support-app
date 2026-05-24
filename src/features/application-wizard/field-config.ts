@@ -51,7 +51,6 @@ export const stepTranslationKeys = [
 export const genderOptions: Gender[] = [
   "female",
   "male",
-  "nonBinary",
   "preferNotToSay"
 ];
 

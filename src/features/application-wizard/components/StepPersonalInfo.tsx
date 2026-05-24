@@ -10,6 +10,9 @@ type StepProps = {
 
 export function StepPersonalInfo({errorText}: StepProps) {
   const t = useTranslations("form");
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const maxDateOfBirth = yesterday.toISOString().slice(0, 10);
 
   return (
     <fieldset className="grid gap-5 md:grid-cols-2">
@@ -30,6 +33,7 @@ export function StepPersonalInfo({errorText}: StepProps) {
         name="dateOfBirth"
         label={t("fields.dateOfBirth")}
         type="date"
+        max={maxDateOfBirth}
         errorText={errorText}
       />
       <SelectField
