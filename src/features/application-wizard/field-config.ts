@@ -1,4 +1,11 @@
-import type {ApplicationForm, SituationField} from "./types";
+import type {
+  ApplicationForm,
+  EmploymentStatus,
+  Gender,
+  HousingStatus,
+  MaritalStatus,
+  SituationField
+} from "./types";
 
 export type ApplicationFieldName = keyof ApplicationForm;
 
@@ -40,3 +47,34 @@ export const stepTranslationKeys = [
   "family",
   "situation"
 ] as const;
+
+export const genderOptions: Gender[] = [
+  "female",
+  "male",
+  "nonBinary",
+  "preferNotToSay"
+];
+
+export const maritalStatusOptions: MaritalStatus[] = [
+  "single",
+  "married",
+  "divorced",
+  "widowed"
+];
+
+export const employmentStatusOptions: EmploymentStatus[] = [
+  "employed",
+  "unemployed",
+  "selfEmployed",
+  "student",
+  "retired",
+  "unableToWork"
+];
+
+export const housingStatusOptions: HousingStatus[] = [
+  "rent",
+  "own",
+  "withFamily",
+  "temporary",
+  "homeless"
+];

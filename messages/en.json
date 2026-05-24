@@ -19,6 +19,7 @@
     "common": {
       "back": "Back",
       "next": "Next",
+      "select": "Select an option",
       "stepCount": "Step {current} of {total}"
     },
     "phase2": {
@@ -44,6 +45,43 @@
       "financialSituation": "Current Financial Situation",
       "employmentCircumstances": "Employment Circumstances",
       "reasonForApplying": "Reason for Applying"
+    },
+    "helpers": {
+      "nationalId": "Use letters, numbers, or hyphens only.",
+      "dependents": "Enter the number of people financially dependent on you.",
+      "monthlyIncome": "Enter your estimated monthly income before assistance.",
+      "financialSituation": "Describe income, expenses, debts, and urgent financial needs.",
+      "employmentCircumstances": "Describe your work status and any recent changes.",
+      "reasonForApplying": "Explain what support you need and how it would help."
+    },
+    "options": {
+      "gender": {
+        "female": "Female",
+        "male": "Male",
+        "nonBinary": "Non-binary",
+        "preferNotToSay": "Prefer not to say"
+      },
+      "maritalStatus": {
+        "single": "Single",
+        "married": "Married",
+        "divorced": "Divorced",
+        "widowed": "Widowed"
+      },
+      "employmentStatus": {
+        "employed": "Employed",
+        "unemployed": "Unemployed",
+        "selfEmployed": "Self-employed",
+        "student": "Student",
+        "retired": "Retired",
+        "unableToWork": "Unable to work"
+      },
+      "housingStatus": {
+        "rent": "Rent",
+        "own": "Own",
+        "withFamily": "Living with family",
+        "temporary": "Temporary housing",
+        "homeless": "No stable housing"
+      }
     },
     "errors": {
       "summaryTitle": "Please review the highlighted fields.",

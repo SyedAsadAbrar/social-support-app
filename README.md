@@ -13,10 +13,10 @@ Completed:
 - RTL/LTR layout behavior
 - Core dependencies for later form, validation, AI, and testing phases
 - Phase 2 form domain model, Zod schema, step metadata, wizard shell, progress indicator, active-step validation, focus handling, and error summary
+- Phase 3 responsive Step 1, Step 2, and Step 3 form fields with localized labels, helpers, options, and field-level validation messages
 
 Not implemented yet:
 
-- Detailed step field UIs
 - Local draft persistence
 - Mock submission API
 - OpenAI suggestion API

@@ -19,6 +19,7 @@
     "common": {
       "back": "رجوع",
       "next": "التالي",
+      "select": "اختر خيارًا",
       "stepCount": "الخطوة {current} من {total}"
     },
     "phase2": {
@@ -44,6 +45,43 @@
       "financialSituation": "الوضع المالي الحالي",
       "employmentCircumstances": "ظروف العمل",
       "reasonForApplying": "سبب التقديم"
+    },
+    "helpers": {
+      "nationalId": "استخدم الأحرف أو الأرقام أو الشرطات فقط.",
+      "dependents": "أدخل عدد الأشخاص المعتمدين عليك ماليًا.",
+      "monthlyIncome": "أدخل تقدير دخلك الشهري قبل المساعدة.",
+      "financialSituation": "صف الدخل والمصاريف والديون والاحتياجات المالية العاجلة.",
+      "employmentCircumstances": "صف حالة عملك وأي تغييرات حديثة.",
+      "reasonForApplying": "اشرح نوع الدعم الذي تحتاجه وكيف سيساعدك."
+    },
+    "options": {
+      "gender": {
+        "female": "أنثى",
+        "male": "ذكر",
+        "nonBinary": "غير ثنائي",
+        "preferNotToSay": "أفضل عدم الإفصاح"
+      },
+      "maritalStatus": {
+        "single": "أعزب",
+        "married": "متزوج",
+        "divorced": "مطلق",
+        "widowed": "أرمل"
+      },
+      "employmentStatus": {
+        "employed": "موظف",
+        "unemployed": "عاطل عن العمل",
+        "selfEmployed": "عمل حر",
+        "student": "طالب",
+        "retired": "متقاعد",
+        "unableToWork": "غير قادر على العمل"
+      },
+      "housingStatus": {
+        "rent": "إيجار",
+        "own": "ملك",
+        "withFamily": "السكن مع الأسرة",
+        "temporary": "سكن مؤقت",
+        "homeless": "لا يوجد سكن مستقر"
+      }
     },
     "errors": {
       "summaryTitle": "يرجى مراجعة الحقول المحددة.",

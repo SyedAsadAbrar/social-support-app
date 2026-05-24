@@ -12,6 +12,9 @@ import {stepFields, stepTranslationKeys} from "../field-config";
 import {applicationSchema} from "../schema";
 import type {ApplicationForm} from "../types";
 import {ProgressStepper} from "./ProgressStepper";
+import {StepFamilyFinancial} from "./StepFamilyFinancial";
+import {StepPersonalInfo} from "./StepPersonalInfo";
+import {StepSituationDescriptions} from "./StepSituationDescriptions";
 
 type WizardShellProps = {
   locale: Locale;
@@ -62,6 +65,17 @@ export function WizardShell({locale}: WizardShellProps) {
   function goBack() {
     setCurrentStep((step) => Math.max(step - 1, 0));
   }
+
+  const errorText = (key: string) => t(`errors.${key}`);
+
+  const currentStepContent =
+    currentStep === 0 ? (
+      <StepPersonalInfo errorText={errorText} />
+    ) : currentStep === 1 ? (
+      <StepFamilyFinancial errorText={errorText} />
+    ) : (
+      <StepSituationDescriptions errorText={errorText} />
+    );
 
   return (
     <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
@@ -131,14 +145,7 @@ export function WizardShell({locale}: WizardShellProps) {
                 </div>
               ) : null}
 
-              <div className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-5">
-                <p className="text-sm font-semibold text-slate-700">
-                  {t("phase2.placeholderTitle")}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {t("phase2.placeholderDescription")}
-                </p>
-              </div>
+              {currentStepContent}
             </section>
 
             <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
