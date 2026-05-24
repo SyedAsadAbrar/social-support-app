@@ -124,7 +124,11 @@ export function WizardShell({locale}: WizardShellProps) {
           </Link>
         </header>
 
-        <ProgressStepper currentStep={currentStep} labels={stepLabels} />
+        <ProgressStepper
+          currentStep={currentStep}
+          labels={stepLabels}
+          progressLabel={t("common.progress")}
+        />
 
         <FormProvider {...methods}>
           <form

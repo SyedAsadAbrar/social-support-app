@@ -1,46 +1,75 @@
-"use client";
-
-import {Check} from "lucide-react";
+import {classNames} from "@/lib/classNames";
 
 type ProgressStepperProps = {
   currentStep: number;
   labels: string[];
+  progressLabel: string;
 };
 
-export function ProgressStepper({currentStep, labels}: ProgressStepperProps) {
+export function ProgressStepper({
+  currentStep,
+  labels,
+  progressLabel
+}: ProgressStepperProps) {
+  const stepCount = labels.length;
+  const completedSegments = Math.max(currentStep, 0);
+  const totalSegments = Math.max(stepCount - 1, 1);
+  const progressPercent = Math.round((completedSegments / totalSegments) * 100);
+
   return (
-    <nav aria-label="Application progress">
-      <ol className="grid gap-3 sm:grid-cols-3">
+    <nav
+      aria-label="Application progress"
+      className="rounded-lg border border-slate-200 bg-white px-4 py-5 shadow-sm sm:px-6"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm font-semibold text-ink">{progressLabel}</p>
+        <p className="text-sm font-bold text-civic">{progressPercent}%</p>
+      </div>
+
+      <ol className="relative mt-5 grid grid-cols-3 gap-2">
+        <span
+          aria-hidden="true"
+          className="absolute left-[16.666%] right-[16.666%] top-5 h-0.5 bg-slate-300"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute left-[16.666%] top-5 h-0.5 bg-civic transition-[width] duration-300 ease-out"
+          style={{width: `${progressPercent * (2 / 3)}%`}}
+        />
         {labels.map((label, index) => {
           const isCurrent = index === currentStep;
           const isComplete = index < currentStep;
 
           return (
-            <li key={label}>
+            <li key={label} className="relative min-w-0">
               <div
                 aria-current={isCurrent ? "step" : undefined}
-                className={[
-                  "flex min-h-16 items-center gap-3 rounded-md border px-4 py-3",
-                  isCurrent
-                    ? "border-action bg-white shadow-sm"
-                    : isComplete
-                      ? "border-civic bg-emerald-50"
-                      : "border-slate-200 bg-slate-50"
-                ].join(" ")}
+                className="grid justify-items-center gap-2 text-center"
               >
                 <span
-                  className={[
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                    isCurrent
-                      ? "bg-action text-white"
-                      : isComplete
-                        ? "bg-civic text-white"
-                        : "bg-slate-200 text-slate-700"
-                  ].join(" ")}
+                  className={classNames(
+                    "z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition-colors",
+                    isComplete
+                      ? "border-civic bg-civic text-white"
+                      : isCurrent
+                        ? "border-civic bg-white text-civic"
+                        : "border-slate-300 bg-slate-50 text-slate-700"
+                  )}
                 >
-                  {isComplete ? <Check aria-hidden="true" size={18} /> : index + 1}
+                  {index + 1}
                 </span>
-                <span className="text-sm font-semibold text-ink">{label}</span>
+                <span
+                  className={classNames(
+                    "max-w-full truncate text-xs font-semibold uppercase sm:text-sm",
+                    isComplete
+                      ? "text-ink"
+                      : isCurrent
+                        ? "text-civic"
+                        : "text-slate-500"
+                  )}
+                >
+                  {label}
+                </span>
               </div>
             </li>
           );
