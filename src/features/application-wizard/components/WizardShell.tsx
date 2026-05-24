@@ -7,6 +7,7 @@ import {useTranslations} from "next-intl";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {FormProvider, useForm} from "react-hook-form";
 import type {Locale} from "@/i18n/config";
+import {loadDraft, saveDraft} from "@/lib/storage";
 import {defaultApplicationValues} from "../defaults";
 import {stepFields, stepTranslationKeys} from "../field-config";
 import {applicationSchema} from "../schema";
@@ -23,6 +24,7 @@ type WizardShellProps = {
 export function WizardShell({locale}: WizardShellProps) {
   const t = useTranslations("form");
   const [currentStep, setCurrentStep] = useState(0);
+  const hasLoadedDraft = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const methods = useForm<ApplicationForm>({
@@ -33,7 +35,9 @@ export function WizardShell({locale}: WizardShellProps) {
 
   const {
     formState: {errors},
-    trigger
+    reset,
+    trigger,
+    watch
   } = methods;
 
   const stepLabels = useMemo(
@@ -44,6 +48,25 @@ export function WizardShell({locale}: WizardShellProps) {
   useEffect(() => {
     stepHeadingRef.current?.focus();
   }, [currentStep]);
+
+  useEffect(() => {
+    const draft = loadDraft();
+    if (draft) {
+      reset({...defaultApplicationValues, ...draft});
+    }
+
+    hasLoadedDraft.current = true;
+  }, [reset]);
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      if (hasLoadedDraft.current) {
+        saveDraft(values);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   const activeFieldNames = stepFields[currentStep];
   const activeErrors = activeFieldNames
