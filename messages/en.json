@@ -36,7 +36,8 @@
     "steps": {
       "personal": "Personal Information",
       "family": "Family & Financial Info",
-      "situation": "Situation Descriptions"
+      "situation": "Situation Descriptions",
+      "result": "Submission Result"
     },
     "common": {
       "back": "Back",
@@ -120,6 +121,10 @@
       "submitting": "Submitting...",
       "successTitle": "Application submitted",
       "successDescription": "Reference {applicationId} was submitted on {submittedAt}. Your local draft has been cleared.",
+      "resultDescription": "Your application has been received successfully. Keep this reference number for your records.",
+      "referenceLabel": "Application reference",
+      "submittedAtLabel": "Submitted at",
+      "startNew": "Start new application",
       "failure": "We could not submit the application right now. Please try again.",
       "invalid": "Please fix the highlighted fields before submitting."
     },

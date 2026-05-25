@@ -20,6 +20,7 @@ Completed:
 - Phase 6 OpenAI suggestion API at `/api/ai/suggest` with server-only API key usage, non-sensitive draft context, request validation, configurable model, and timeout/error handling
 - Phase 7 AI suggestion UI for Step 3 with Help Me Write buttons, loading/error states, retry, editable suggestions, accept, and discard actions
 - Phase 8 accessibility and UX polish for localized progress semantics, required field ARIA, RTL navigation icons, AI request cancellation, and safer local env placeholders
+- Submission confirmation now appears as a dedicated final wizard step instead of inline feedback
 
 Not implemented yet:
 

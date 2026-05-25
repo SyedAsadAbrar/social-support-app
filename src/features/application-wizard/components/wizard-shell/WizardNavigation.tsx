@@ -7,7 +7,8 @@ import type {Locale} from "@/i18n/config";
 type WizardNavigationProps = {
   locale: Locale;
   currentStep: number;
-  totalSteps: number;
+  submitStep: number;
+  resultStep: number;
   isSubmitting: boolean;
   onBack: () => void;
   onNext: () => void;
@@ -16,15 +17,20 @@ type WizardNavigationProps = {
 export function WizardNavigation({
   locale,
   currentStep,
-  totalSteps,
+  submitStep,
+  resultStep,
   isSubmitting,
   onBack,
   onNext
 }: WizardNavigationProps) {
   const t = useTranslations("form");
-  const isLastStep = currentStep === totalSteps - 1;
+  const isSubmitStep = currentStep === submitStep;
   const BackIcon = locale === "ar" ? ArrowRight : ArrowLeft;
   const NextIcon = locale === "ar" ? ArrowLeft : ArrowRight;
+
+  if (currentStep === resultStep) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
@@ -38,7 +44,7 @@ export function WizardNavigation({
         {t("common.back")}
       </button>
 
-      {isLastStep ? (
+      {isSubmitStep ? (
         <button
           type="submit"
           disabled={isSubmitting}

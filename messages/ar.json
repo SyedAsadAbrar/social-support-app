@@ -36,7 +36,8 @@
     "steps": {
       "personal": "المعلومات الشخصية",
       "family": "معلومات الأسرة والدخل",
-      "situation": "وصف الحالة"
+      "situation": "وصف الحالة",
+      "result": "نتيجة الإرسال"
     },
     "common": {
       "back": "رجوع",
@@ -120,6 +121,10 @@
       "submitting": "جارٍ الإرسال...",
       "successTitle": "تم إرسال الطلب",
       "successDescription": "تم إرسال المرجع {applicationId} في {submittedAt}. تم مسح المسودة المحلية.",
+      "resultDescription": "تم استلام طلبك بنجاح. احتفظ برقم المرجع هذا في سجلاتك.",
+      "referenceLabel": "رقم مرجع الطلب",
+      "submittedAtLabel": "وقت الإرسال",
+      "startNew": "بدء طلب جديد",
       "failure": "تعذر إرسال الطلب الآن. يرجى المحاولة مرة أخرى.",
       "invalid": "يرجى تصحيح الحقول المحددة قبل الإرسال."
     },

@@ -59,6 +59,8 @@ export function WizardShell({locale}: WizardShellProps) {
     () => stepTranslationKeys.map((key) => t(`steps.${key}`)),
     [t]
   );
+  const submitStep = stepFields.length - 1;
+  const resultStep = stepLabels.length - 1;
 
   useEffect(() => {
     if (hasNavigatedSteps.current) {
@@ -74,7 +76,7 @@ export function WizardShell({locale}: WizardShellProps) {
       reset({...defaultApplicationValues, ...draft.values});
 
       if (draft.currentStep !== null) {
-        restoredStep = Math.max(0, Math.min(draft.currentStep, stepTranslationKeys.length - 1));
+        restoredStep = Math.max(0, Math.min(draft.currentStep, submitStep));
       }
     }
 
@@ -82,15 +84,15 @@ export function WizardShell({locale}: WizardShellProps) {
       setCurrentStep(restoredStep);
       setDraftReady(true);
     });
-  }, [reset]);
+  }, [reset, submitStep]);
 
   useEffect(() => {
-    if (draftReady) {
+    if (draftReady && !submissionResult && currentStep <= submitStep) {
       saveDraft(watchedValues, currentStep);
     }
-  }, [currentStep, draftReady, watchedValues]);
+  }, [currentStep, draftReady, submissionResult, submitStep, watchedValues]);
 
-  const activeFieldNames = stepFields[currentStep];
+  const activeFieldNames = currentStep < stepFields.length ? stepFields[currentStep] : [];
   const activeErrors = activeFieldNames
     .map((field) => ({
       field,
@@ -135,6 +137,8 @@ export function WizardShell({locale}: WizardShellProps) {
 
       clearDraft();
       setSubmissionResult(payload);
+      hasNavigatedSteps.current = true;
+      setCurrentStep(resultStep);
     } catch {
       setSubmitError(t("submit.failure"));
     }
@@ -154,6 +158,15 @@ export function WizardShell({locale}: WizardShellProps) {
   }
 
   const errorText = (key: string) => t(`errors.${key}`);
+
+  function startNewApplication() {
+    clearDraft();
+    reset(defaultApplicationValues);
+    setSubmissionResult(null);
+    setSubmitError(null);
+    hasNavigatedSteps.current = true;
+    setCurrentStep(0);
+  }
 
   return (
     <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
@@ -185,19 +198,20 @@ export function WizardShell({locale}: WizardShellProps) {
                 locale={locale}
                 currentStep={currentStep}
                 errorText={errorText}
+                submissionResult={submissionResult}
+                onStartNew={startNewApplication}
               />
             </WizardStepSection>
 
             <SubmissionFeedback
-              locale={locale}
-              result={submissionResult}
               error={submitError}
             />
 
             <WizardNavigation
               locale={locale}
               currentStep={currentStep}
-              totalSteps={stepLabels.length}
+              submitStep={submitStep}
+              resultStep={resultStep}
               isSubmitting={isSubmitting}
               onBack={goBack}
               onNext={goNext}
