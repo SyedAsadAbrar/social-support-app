@@ -45,8 +45,7 @@ export const stepFields = [
 export const stepTranslationKeys = [
   "personal",
   "family",
-  "situation",
-  "result"
+  "situation"
 ] as const;
 
 export const genderOptions: Gender[] = [

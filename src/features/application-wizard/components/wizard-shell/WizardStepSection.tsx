@@ -10,32 +10,32 @@ type StepError = {
 };
 
 type WizardStepSectionProps = {
-  currentStep: number;
-  stepLabels: string[];
+  heading: string;
+  stepCountLabel?: string;
   activeErrors: StepError[];
   children: ReactNode;
 };
 
 export const WizardStepSection = forwardRef<HTMLHeadingElement, WizardStepSectionProps>(
-  function WizardStepSection({currentStep, stepLabels, activeErrors, children}, ref) {
+  function WizardStepSection(
+    {heading, stepCountLabel, activeErrors, children},
+    ref
+  ) {
     const t = useTranslations("form");
 
     return (
       <section aria-labelledby="step-heading" className="grid gap-5">
         <div>
-          <p className="text-sm font-semibold text-civic">
-            {t("common.stepCount", {
-              current: currentStep + 1,
-              total: stepLabels.length
-            })}
-          </p>
+          {stepCountLabel ? (
+            <p className="text-sm font-semibold text-civic">{stepCountLabel}</p>
+          ) : null}
           <h2
             id="step-heading"
             ref={ref}
             tabIndex={-1}
             className="mt-1 text-2xl font-bold text-ink"
           >
-            {stepLabels[currentStep]}
+            {heading}
           </h2>
         </div>
 

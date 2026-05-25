@@ -13,9 +13,12 @@ export function ProgressStepper({
 }: ProgressStepperProps) {
   const stepCount = labels.length;
   const safeCurrentStep = Math.min(Math.max(currentStep, 0), Math.max(stepCount - 1, 0));
+  const isComplete = currentStep >= stepCount;
   const horizontalPaddingPercent = stepCount > 0 ? 50 / stepCount : 0;
   const trackFillPercent =
-    stepCount <= 1 ? 0 : (safeCurrentStep / (stepCount - 1)) * 100;
+    stepCount <= 1
+      ? isComplete ? 100 : 0
+      : isComplete ? 100 : (safeCurrentStep / (stepCount - 1)) * 100;
 
   return (
     <nav
@@ -49,8 +52,8 @@ export function ProgressStepper({
           style={{gridTemplateColumns: `repeat(${stepCount}, minmax(0, 1fr))`}}
         >
           {labels.map((label, index) => {
-            const isCurrent = index === safeCurrentStep;
-            const isComplete = index < safeCurrentStep;
+            const isCurrent = !isComplete && index === safeCurrentStep;
+            const isStepComplete = isComplete || index < safeCurrentStep;
 
             return (
               <li key={label} className="relative min-w-0">
@@ -61,7 +64,7 @@ export function ProgressStepper({
                   <span
                     className={classNames(
                       "z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition-colors",
-                      isComplete
+                      isStepComplete
                         ? "border-civic bg-civic text-white"
                         : isCurrent
                           ? "border-civic bg-white text-civic"
@@ -73,7 +76,7 @@ export function ProgressStepper({
                   <span
                     className={classNames(
                       "max-w-full truncate text-xs font-semibold uppercase sm:text-sm",
-                      isComplete
+                      isStepComplete
                         ? "text-ink"
                         : isCurrent
                           ? "text-civic"

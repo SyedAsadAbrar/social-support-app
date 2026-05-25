@@ -60,7 +60,15 @@ export function WizardShell({locale}: WizardShellProps) {
     [t]
   );
   const submitStep = stepFields.length - 1;
-  const resultStep = stepLabels.length - 1;
+  const resultStep = stepFields.length;
+  const isResultStep = currentStep === resultStep;
+  const stepHeading = isResultStep ? t("result.title") : stepLabels[currentStep];
+  const stepCountLabel = isResultStep
+    ? t("result.stepLabel")
+    : t("common.stepCount", {
+        current: currentStep + 1,
+        total: stepLabels.length
+      });
 
   useEffect(() => {
     if (hasNavigatedSteps.current) {
@@ -174,7 +182,7 @@ export function WizardShell({locale}: WizardShellProps) {
         <WizardHeader locale={locale} />
 
         <ProgressStepper
-          currentStep={currentStep}
+          currentStep={isResultStep ? stepLabels.length : currentStep}
           labels={stepLabels}
           progressLabel={t("common.progress")}
         />
@@ -190,8 +198,8 @@ export function WizardShell({locale}: WizardShellProps) {
           >
             <WizardStepSection
               ref={stepHeadingRef}
-              currentStep={currentStep}
-              stepLabels={stepLabels}
+              heading={stepHeading}
+              stepCountLabel={stepCountLabel}
               activeErrors={activeErrors}
             >
               <WizardStepContent

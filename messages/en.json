@@ -36,8 +36,11 @@
     "steps": {
       "personal": "Personal Information",
       "family": "Family & Financial Info",
-      "situation": "Situation Descriptions",
-      "result": "Submission Result"
+      "situation": "Situation Descriptions"
+    },
+    "result": {
+      "title": "Submission Result",
+      "stepLabel": "Application submitted"
     },
     "common": {
       "back": "Back",
