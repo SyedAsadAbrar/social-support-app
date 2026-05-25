@@ -1,27 +1,34 @@
 "use client";
 
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useTranslations} from "next-intl";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {FormProvider, type FieldErrors, useForm, useWatch} from "react-hook-form";
-import type {Locale} from "@/i18n/config";
-import {clearDraft, loadDraft, saveDraft} from "@/lib/storage";
-import {defaultApplicationValues} from "../../defaults";
-import {stepFields, stepTranslationKeys} from "../../field-config";
-import {applicationSchema} from "../../schema";
-import type {ApplicationForm, ApplicationSubmissionResult} from "../../types";
-import {ProgressStepper} from "../ProgressStepper";
-import {SubmissionFeedback} from "./SubmissionFeedback";
-import {WizardHeader} from "./WizardHeader";
-import {WizardNavigation} from "./WizardNavigation";
-import {WizardStepContent} from "./WizardStepContent";
-import {WizardStepSection} from "./WizardStepSection";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  FormProvider,
+  type FieldErrors,
+  useForm,
+  useWatch,
+} from "react-hook-form";
+import type { Locale } from "@/i18n/config";
+import { clearDraft, loadDraft, saveDraft } from "@/lib/storage";
+import { defaultApplicationValues } from "../../defaults";
+import { stepFields, stepTranslationKeys } from "../../field-config";
+import { applicationSchema } from "../../schema";
+import type { ApplicationForm, ApplicationSubmissionResult } from "../../types";
+import { ProgressStepper } from "../ProgressStepper";
+import { SubmissionFeedback } from "./SubmissionFeedback";
+import { WizardHeader } from "./WizardHeader";
+import { WizardNavigation } from "./WizardNavigation";
+import { WizardStepContent } from "./WizardStepContent";
+import { WizardStepSection } from "./WizardStepSection";
 
 type WizardShellProps = {
   locale: Locale;
 };
 
-function isSubmissionResult(value: unknown): value is ApplicationSubmissionResult {
+function isSubmissionResult(
+  value: unknown,
+): value is ApplicationSubmissionResult {
   if (!value || typeof value !== "object") {
     return false;
   }
@@ -30,7 +37,7 @@ function isSubmissionResult(value: unknown): value is ApplicationSubmissionResul
   return Boolean(result.applicationId && result.submittedAt);
 }
 
-export function WizardShell({locale}: WizardShellProps) {
+export function WizardShell({ locale }: WizardShellProps) {
   const t = useTranslations("form");
   const [currentStep, setCurrentStep] = useState(0);
   const [submissionResult, setSubmissionResult] =
@@ -38,7 +45,7 @@ export function WizardShell({locale}: WizardShellProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
   const [validatedSteps, setValidatedSteps] = useState<ReadonlySet<number>>(
-    () => new Set()
+    () => new Set(),
   );
   const hasNavigatedSteps = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -46,34 +53,37 @@ export function WizardShell({locale}: WizardShellProps) {
   const methods = useForm<ApplicationForm>({
     resolver: zodResolver(applicationSchema),
     defaultValues: defaultApplicationValues,
-    mode: "onTouched"
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   });
 
   const {
     control,
-    formState: {errors, isSubmitting},
+    formState: { errors, isSubmitting },
     clearErrors,
     getValues,
     handleSubmit,
     reset,
     setError,
-    setFocus
+    setFocus,
   } = methods;
-  const watchedValues = useWatch({control});
+  const watchedValues = useWatch({ control });
 
   const stepLabels = useMemo(
     () => stepTranslationKeys.map((key) => t(`steps.${key}`)),
-    [t]
+    [t],
   );
   const submitStep = stepFields.length - 1;
   const resultStep = stepFields.length;
   const isResultStep = currentStep === resultStep;
-  const stepHeading = isResultStep ? t("result.title") : stepLabels[currentStep];
+  const stepHeading = isResultStep
+    ? t("result.title")
+    : stepLabels[currentStep];
   const stepCountLabel = isResultStep
     ? t("result.stepLabel")
     : t("common.stepCount", {
         current: currentStep + 1,
-        total: stepLabels.length
+        total: stepLabels.length,
       });
 
   useEffect(() => {
@@ -87,7 +97,7 @@ export function WizardShell({locale}: WizardShellProps) {
     let restoredStep = 0;
 
     if (draft) {
-      reset({...defaultApplicationValues, ...draft.values});
+      reset({ ...defaultApplicationValues, ...draft.values });
 
       if (draft.currentStep !== null) {
         restoredStep = Math.max(0, Math.min(draft.currentStep, submitStep));
@@ -106,20 +116,36 @@ export function WizardShell({locale}: WizardShellProps) {
     }
   }, [currentStep, draftReady, submissionResult, submitStep, watchedValues]);
 
-  const activeFieldNames = currentStep < stepFields.length ? stepFields[currentStep] : [];
+  const activeFieldNames =
+    currentStep < stepFields.length ? stepFields[currentStep] : [];
   const showValidation = validatedSteps.has(currentStep);
   const activeErrors = activeFieldNames
     .map((field) => ({
       field,
-      message: errors[field]?.message
+      message: errors[field]?.message,
     }))
     .filter(
-      (item): item is {field: keyof ApplicationForm; message: string} =>
-        showValidation && Boolean(item.message)
+      (item): item is { field: keyof ApplicationForm; message: string } =>
+        showValidation && Boolean(item.message),
     );
 
   function markStepValidated(step: number) {
     setValidatedSteps((steps) => new Set(steps).add(step));
+  }
+
+  function moveToStepWithoutValidation(nextStep: number) {
+    setValidatedSteps((steps) => {
+      const nextSteps = new Set(steps);
+      nextSteps.add(currentStep);
+      nextSteps.delete(nextStep);
+      return nextSteps;
+    });
+
+    if (nextStep < stepFields.length) {
+      clearErrors(stepFields[nextStep]);
+    }
+
+    setCurrentStep(nextStep);
   }
 
   function clearStepValidation(step: number) {
@@ -156,7 +182,7 @@ export function WizardShell({locale}: WizardShellProps) {
     fieldErrors.forEach((message, field) => {
       setError(field, {
         type: "manual",
-        message
+        message,
       });
     });
 
@@ -169,14 +195,14 @@ export function WizardShell({locale}: WizardShellProps) {
   }
 
   function goNext() {
-    markStepValidated(currentStep);
     const valid = validateCurrentStep();
     if (valid) {
       const nextStep = Math.min(currentStep + 1, stepLabels.length - 1);
       setSubmitError(null);
       hasNavigatedSteps.current = true;
-      clearStepValidation(nextStep);
-      setCurrentStep(nextStep);
+      moveToStepWithoutValidation(nextStep);
+    } else {
+      markStepValidated(currentStep);
     }
   }
 
@@ -196,9 +222,9 @@ export function WizardShell({locale}: WizardShellProps) {
       const response = await fetch("/api/applications", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(values)
+        body: JSON.stringify(values),
       });
       const payload = (await response.json()) as unknown;
 
@@ -217,7 +243,7 @@ export function WizardShell({locale}: WizardShellProps) {
 
   function handleInvalidSubmit(submitErrors: FieldErrors<ApplicationForm>) {
     const firstInvalidStep = stepFields.findIndex((fields) =>
-      fields.some((field) => Boolean(submitErrors[field]))
+      fields.some((field) => Boolean(submitErrors[field])),
     );
 
     if (firstInvalidStep >= 0) {
@@ -278,9 +304,7 @@ export function WizardShell({locale}: WizardShellProps) {
               />
             </WizardStepSection>
 
-            <SubmissionFeedback
-              error={submitError}
-            />
+            <SubmissionFeedback error={submitError} />
 
             <WizardNavigation
               locale={locale}
