@@ -6,16 +6,16 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {FormProvider, type FieldErrors, useForm, useWatch} from "react-hook-form";
 import type {Locale} from "@/i18n/config";
 import {clearDraft, loadDraft, saveDraft} from "@/lib/storage";
-import {defaultApplicationValues} from "../defaults";
-import {stepFields, stepTranslationKeys} from "../field-config";
-import {applicationSchema} from "../schema";
-import type {ApplicationForm, ApplicationSubmissionResult} from "../types";
-import {ProgressStepper} from "./ProgressStepper";
-import {SubmissionFeedback} from "./wizard-shell/SubmissionFeedback";
-import {WizardHeader} from "./wizard-shell/WizardHeader";
-import {WizardNavigation} from "./wizard-shell/WizardNavigation";
-import {WizardStepContent} from "./wizard-shell/WizardStepContent";
-import {WizardStepSection} from "./wizard-shell/WizardStepSection";
+import {defaultApplicationValues} from "../../defaults";
+import {stepFields, stepTranslationKeys} from "../../field-config";
+import {applicationSchema} from "../../schema";
+import type {ApplicationForm, ApplicationSubmissionResult} from "../../types";
+import {ProgressStepper} from "../ProgressStepper";
+import {SubmissionFeedback} from "./SubmissionFeedback";
+import {WizardHeader} from "./WizardHeader";
+import {WizardNavigation} from "./WizardNavigation";
+import {WizardStepContent} from "./WizardStepContent";
+import {WizardStepSection} from "./WizardStepSection";
 
 type WizardShellProps = {
   locale: Locale;

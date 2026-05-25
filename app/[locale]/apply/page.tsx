@@ -1,5 +1,5 @@
 import {setRequestLocale} from "next-intl/server";
-import {WizardShell} from "@/features/application-wizard/components/WizardShell";
+import {WizardShell} from "@/features/application-wizard/components/wizard-shell/WizardShell";
 import type {Locale} from "@/i18n/config";
 
 type ApplyPageProps = {
