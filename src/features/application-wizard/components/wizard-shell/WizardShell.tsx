@@ -37,6 +37,9 @@ export function WizardShell({locale}: WizardShellProps) {
     useState<ApplicationSubmissionResult | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
+  const [validatedSteps, setValidatedSteps] = useState<ReadonlySet<number>>(
+    () => new Set()
+  );
   const hasNavigatedSteps = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
 
@@ -107,16 +110,23 @@ export function WizardShell({locale}: WizardShellProps) {
   }, [currentStep, draftReady, submissionResult, submitStep, watchedValues]);
 
   const activeFieldNames = currentStep < stepFields.length ? stepFields[currentStep] : [];
+  const showValidation = validatedSteps.has(currentStep);
   const activeErrors = activeFieldNames
     .map((field) => ({
       field,
       message: errors[field]?.message
     }))
-    .filter((item): item is {field: keyof ApplicationForm; message: string} =>
-      Boolean(item.message)
+    .filter(
+      (item): item is {field: keyof ApplicationForm; message: string} =>
+        showValidation && Boolean(item.message)
     );
 
+  function markStepValidated(step: number) {
+    setValidatedSteps((steps) => new Set(steps).add(step));
+  }
+
   async function goNext() {
+    markStepValidated(currentStep);
     const valid = await trigger(activeFieldNames, {shouldFocus: true});
     if (valid) {
       setSubmitError(null);
@@ -165,6 +175,7 @@ export function WizardShell({locale}: WizardShellProps) {
     );
 
     if (firstInvalidStep >= 0) {
+      markStepValidated(firstInvalidStep);
       setCurrentStep(firstInvalidStep);
     }
 
@@ -177,6 +188,7 @@ export function WizardShell({locale}: WizardShellProps) {
   function startNewApplication() {
     clearDraft();
     reset(defaultApplicationValues);
+    setValidatedSteps(new Set());
     setSubmissionResult(null);
     setSubmitError(null);
     hasNavigatedSteps.current = true;
@@ -192,6 +204,7 @@ export function WizardShell({locale}: WizardShellProps) {
           currentStep={isResultStep ? stepLabels.length : currentStep}
           labels={stepLabels}
           progressLabel={t("common.progress")}
+          dir={locale === "ar" ? "rtl" : "ltr"}
         />
 
         <FormProvider {...methods}>
@@ -212,6 +225,7 @@ export function WizardShell({locale}: WizardShellProps) {
               <WizardStepContent
                 locale={locale}
                 currentStep={currentStep}
+                showValidation={showValidation}
                 errorText={errorText}
                 submissionResult={submissionResult}
                 onStartNew={startNewApplication}

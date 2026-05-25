@@ -4,12 +4,14 @@ type ProgressStepperProps = {
   currentStep: number;
   labels: string[];
   progressLabel: string;
+  dir?: "ltr" | "rtl";
 };
 
 export function ProgressStepper({
   currentStep,
   labels,
-  progressLabel
+  progressLabel,
+  dir = "ltr"
 }: ProgressStepperProps) {
   const stepCount = labels.length;
   const safeCurrentStep = Math.min(Math.max(currentStep, 0), Math.max(stepCount - 1, 0));
@@ -19,10 +21,12 @@ export function ProgressStepper({
     stepCount <= 1
       ? isComplete ? 100 : 0
       : isComplete ? 100 : (safeCurrentStep / (stepCount - 1)) * 100;
+  const isRtl = dir === "rtl";
 
   return (
     <nav
       aria-label={progressLabel}
+      dir={dir}
       className="rounded-lg border border-slate-200 bg-white px-4 py-5 shadow-sm sm:px-6"
     >
       <div className="flex items-center justify-between gap-4">
@@ -41,7 +45,10 @@ export function ProgressStepper({
           >
             <div className="h-full bg-slate-300" />
             <div
-              className="absolute inset-y-0 left-0 bg-civic transition-[width] duration-300 ease-out"
+              className={classNames(
+                "absolute inset-y-0 bg-civic transition-[width] duration-300 ease-out",
+                isRtl ? "right-0" : "left-0"
+              )}
               style={{width: `${trackFillPercent}%`}}
             />
           </div>

@@ -18,6 +18,18 @@ function fieldError(errors: FieldErrors<ApplicationForm>, name: Path<Application
   }, errors) as {message?: string} | undefined;
 }
 
+function fieldTouched(touchedFields: unknown, name: Path<ApplicationForm>) {
+  return Boolean(
+    name.split(".").reduce<unknown>((value, key) => {
+      if (value && typeof value === "object" && key in value) {
+        return (value as Record<string, unknown>)[key];
+      }
+
+      return undefined;
+    }, touchedFields)
+  );
+}
+
 type BaseFieldProps = {
   name: Path<ApplicationForm>;
   label: string;
@@ -25,6 +37,7 @@ type BaseFieldProps = {
   errorText: (key: string) => string;
   required?: boolean;
   labelAction?: ReactNode;
+  showError?: boolean;
 };
 
 type TextFieldProps = BaseFieldProps & {
@@ -49,14 +62,16 @@ export function TextField({
   min,
   max,
   required = true,
+  showError = false,
   errorText
 }: TextFieldProps) {
   const id = useId();
   const {
     register,
-    formState: {errors}
+    formState: {errors, touchedFields}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
+  const visibleError = showError || fieldTouched(touchedFields, name) ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -81,8 +96,8 @@ export function TextField({
         max={max}
         required={required}
         aria-required={required}
-        aria-invalid={Boolean(error)}
-        aria-describedby={[helper ? helperId : "", error ? errorId : ""]
+        aria-invalid={Boolean(visibleError)}
+        aria-describedby={[helper ? helperId : "", visibleError ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
         className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
@@ -101,9 +116,9 @@ export function TextField({
           {helper}
         </p>
       ) : null}
-      {error?.message ? (
+      {visibleError?.message ? (
         <p id={errorId} className="text-sm font-medium text-alert" role="alert">
-          {errorText(error.message)}
+          {errorText(visibleError.message)}
         </p>
       ) : null}
     </div>
@@ -124,14 +139,16 @@ export function SelectField({
   options,
   optionLabel,
   required = true,
+  showError = false,
   errorText
 }: SelectFieldProps) {
   const id = useId();
   const {
     register,
-    formState: {errors}
+    formState: {errors, touchedFields}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
+  const visibleError = showError || fieldTouched(touchedFields, name) ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -149,8 +166,8 @@ export function SelectField({
         id={id}
         required={required}
         aria-required={required}
-        aria-invalid={Boolean(error)}
-        aria-describedby={[helper ? helperId : "", error ? errorId : ""]
+        aria-invalid={Boolean(visibleError)}
+        aria-describedby={[helper ? helperId : "", visibleError ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
         className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
@@ -168,9 +185,9 @@ export function SelectField({
           {helper}
         </p>
       ) : null}
-      {error?.message ? (
+      {visibleError?.message ? (
         <p id={errorId} className="text-sm font-medium text-alert" role="alert">
-          {errorText(error.message)}
+          {errorText(visibleError.message)}
         </p>
       ) : null}
     </div>
@@ -188,14 +205,16 @@ export function TextAreaField({
   rows = 5,
   required = true,
   labelAction,
+  showError = false,
   errorText
 }: TextAreaFieldProps) {
   const id = useId();
   const {
     register,
-    formState: {errors}
+    formState: {errors, touchedFields}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
+  const visibleError = showError || fieldTouched(touchedFields, name) ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -217,8 +236,8 @@ export function TextAreaField({
         rows={rows}
         required={required}
         aria-required={required}
-        aria-invalid={Boolean(error)}
-        aria-describedby={[helper ? helperId : "", error ? errorId : ""]
+        aria-invalid={Boolean(visibleError)}
+        aria-describedby={[helper ? helperId : "", visibleError ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
         className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
@@ -229,9 +248,9 @@ export function TextAreaField({
           {helper}
         </p>
       ) : null}
-      {error?.message ? (
+      {visibleError?.message ? (
         <p id={errorId} className="text-sm font-medium text-alert" role="alert">
-          {errorText(error.message)}
+          {errorText(visibleError.message)}
         </p>
       ) : null}
     </div>

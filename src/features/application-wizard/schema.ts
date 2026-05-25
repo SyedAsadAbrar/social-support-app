@@ -22,6 +22,14 @@ const requiredNumber = (max: number, maxMessage: string) =>
       .max(max, maxMessage)
   );
 
+const requiredEnum = <T extends [string, ...string[]]>(values: T) =>
+  z.preprocess(
+    (value) => value === "" ? undefined : value,
+    z.enum(values, {
+      errorMap: () => ({message: "required"})
+    })
+  );
+
 const situationText = z
   .string({required_error: "required"})
   .trim()
@@ -40,33 +48,25 @@ export const applicationSchema = z.object({
   dateOfBirth: requiredText(20).refine((value) => {
     return value <= yesterdayDateString();
   }, "invalidDate"),
-  gender: z.enum(["male", "female", "preferNotToSay"], {
-    required_error: "required",
-    invalid_type_error: "required"
-  }),
+  gender: requiredEnum(["male", "female", "preferNotToSay"]),
   address: requiredText(240),
   city: requiredText(100),
   state: requiredText(100),
   country: requiredText(100),
   phone: requiredText(40).regex(/^[+()\-\s0-9]{7,24}$/, "invalidPhone"),
   email: requiredText(160).email("invalidEmail"),
-  maritalStatus: z.enum(["single", "married", "divorced", "widowed"], {
-    required_error: "required",
-    invalid_type_error: "required"
-  }),
+  maritalStatus: requiredEnum(["single", "married", "divorced", "widowed"]),
   dependents: requiredNumber(30, "dependentsRange"),
-  employmentStatus: z.enum(
-    ["employed", "unemployed", "selfEmployed", "student", "retired", "unableToWork"],
-    {
-      required_error: "required",
-      invalid_type_error: "required"
-    }
-  ),
+  employmentStatus: requiredEnum([
+    "employed",
+    "unemployed",
+    "selfEmployed",
+    "student",
+    "retired",
+    "unableToWork"
+  ]),
   monthlyIncome: requiredNumber(1000000, "incomeRange"),
-  housingStatus: z.enum(["own", "rent", "withFamily", "temporary", "homeless"], {
-    required_error: "required",
-    invalid_type_error: "required"
-  }),
+  housingStatus: requiredEnum(["own", "rent", "withFamily", "temporary", "homeless"]),
   financialSituation: situationText,
   employmentCircumstances: situationText,
   reasonForApplying: situationText

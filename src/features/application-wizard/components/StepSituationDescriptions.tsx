@@ -12,6 +12,7 @@ import {TextAreaField} from "./FormControls";
 
 type StepProps = {
   locale: Locale;
+  showValidation: boolean;
   errorText: (key: string) => string;
 };
 
@@ -27,7 +28,7 @@ function isSuggestionResponse(value: unknown): value is SuggestionResponse {
   );
 }
 
-export function StepSituationDescriptions({locale, errorText}: StepProps) {
+export function StepSituationDescriptions({locale, showValidation, errorText}: StepProps) {
   const t = useTranslations("form");
   const {getValues, setValue} = useFormContext<ApplicationForm>();
   const [activeField, setActiveField] = useState<SituationField | null>(null);
@@ -146,6 +147,7 @@ export function StepSituationDescriptions({locale, errorText}: StepProps) {
             label={t(`fields.${field}`)}
             helper={t(`helpers.${field}`)}
             rows={5}
+            showError={showValidation}
             errorText={errorText}
             labelAction={
               <button
