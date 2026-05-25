@@ -41,7 +41,7 @@ export function StepSituationDescriptions({locale, errorText}: StepProps) {
     return () => requestControllerRef.current?.abort();
   }, []);
 
-  async function requestSuggestion(field: SituationField) {
+  async function requestSuggestion(field: SituationField, currentTextOverride?: string) {
     const values = getValues();
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15_000);
@@ -70,7 +70,7 @@ export function StepSituationDescriptions({locale, errorText}: StepProps) {
             monthlyIncome: values.monthlyIncome,
             housingStatus: values.housingStatus
           },
-          currentText: values[field]
+          currentText: currentTextOverride ?? values[field]
         }),
         signal: controller.signal
       });
@@ -182,7 +182,7 @@ export function StepSituationDescriptions({locale, errorText}: StepProps) {
         onAccept={acceptSuggestion}
         onEdit={() => setIsEditing(true)}
         onDiscard={closeSuggestion}
-        onRetry={() => activeField && void requestSuggestion(activeField)}
+        onRetry={() => activeField && void requestSuggestion(activeField, suggestion)}
       />
     </>
   );
