@@ -2,7 +2,7 @@
 
 import {WandSparkles} from "lucide-react";
 import {useTranslations} from "next-intl";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useFormContext} from "react-hook-form";
 import type {Locale} from "@/i18n/config";
 import {situationFields} from "../field-config";
@@ -35,12 +35,19 @@ export function StepSituationDescriptions({locale, errorText}: StepProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const requestControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => requestControllerRef.current?.abort();
+  }, []);
 
   async function requestSuggestion(field: SituationField) {
     const values = getValues();
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15_000);
 
+    requestControllerRef.current?.abort();
+    requestControllerRef.current = controller;
     setActiveField(field);
     setSuggestion("");
     setErrorMessage(null);
@@ -80,23 +87,32 @@ export function StepSituationDescriptions({locale, errorText}: StepProps) {
         throw new Error(message);
       }
 
-      setSuggestion(payload.suggestion);
-      setStatus("ready");
+      if (requestControllerRef.current === controller) {
+        setSuggestion(payload.suggestion);
+        setStatus("ready");
+      }
     } catch (error) {
-      setStatus("error");
-      setErrorMessage(
-        error instanceof Error && error.name === "AbortError"
-          ? t("ai.errors.timeout")
-          : error instanceof Error
-            ? error.message
-            : t("ai.errors.failed")
-      );
+      if (requestControllerRef.current === controller) {
+        setStatus("error");
+        setErrorMessage(
+          error instanceof Error && error.name === "AbortError"
+            ? t("ai.errors.timeout")
+            : error instanceof Error
+              ? error.message
+              : t("ai.errors.failed")
+        );
+      }
     } finally {
+      if (requestControllerRef.current === controller) {
+        requestControllerRef.current = null;
+      }
       window.clearTimeout(timeout);
     }
   }
 
   function closeSuggestion() {
+    requestControllerRef.current?.abort();
+    requestControllerRef.current = null;
     setActiveField(null);
     setSuggestion("");
     setErrorMessage(null);
@@ -136,6 +152,7 @@ export function StepSituationDescriptions({locale, errorText}: StepProps) {
                 type="button"
                 onClick={() => void requestSuggestion(field)}
                 disabled={status === "loading"}
+                aria-busy={status === "loading" && activeField === field}
                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-civic px-3 py-2 text-sm font-semibold text-civic hover:bg-civicSoft disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <WandSparkles aria-hidden="true" size={16} />

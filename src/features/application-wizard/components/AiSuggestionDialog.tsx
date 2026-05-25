@@ -84,6 +84,7 @@ export function AiSuggestionDialog({
           {status === "loading" ? (
             <div
               role="status"
+              aria-live="polite"
               className="flex min-h-36 items-center justify-center gap-3 rounded-md border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-ink"
             >
               <LoaderCircle aria-hidden="true" className="animate-spin text-civic" size={20} />
@@ -153,7 +154,8 @@ export function AiSuggestionDialog({
                   <button
                     type="button"
                     onClick={onAccept}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-civic px-4 py-2 text-sm font-semibold text-white hover:bg-civic/90"
+                    disabled={!suggestion.trim()}
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-civic px-4 py-2 text-sm font-semibold text-white hover:bg-civic/90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <Check aria-hidden="true" size={18} />
                     {acceptLabel}

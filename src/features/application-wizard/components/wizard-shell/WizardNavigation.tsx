@@ -2,8 +2,10 @@
 
 import {ArrowLeft, ArrowRight, LoaderCircle, Send} from "lucide-react";
 import {useTranslations} from "next-intl";
+import type {Locale} from "@/i18n/config";
 
 type WizardNavigationProps = {
+  locale: Locale;
   currentStep: number;
   totalSteps: number;
   isSubmitting: boolean;
@@ -12,6 +14,7 @@ type WizardNavigationProps = {
 };
 
 export function WizardNavigation({
+  locale,
   currentStep,
   totalSteps,
   isSubmitting,
@@ -20,6 +23,8 @@ export function WizardNavigation({
 }: WizardNavigationProps) {
   const t = useTranslations("form");
   const isLastStep = currentStep === totalSteps - 1;
+  const BackIcon = locale === "ar" ? ArrowRight : ArrowLeft;
+  const NextIcon = locale === "ar" ? ArrowLeft : ArrowRight;
 
   return (
     <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
@@ -29,7 +34,7 @@ export function WizardNavigation({
         disabled={currentStep === 0}
         className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-ink hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <ArrowLeft aria-hidden="true" size={18} />
+        <BackIcon aria-hidden="true" size={18} />
         {t("common.back")}
       </button>
 
@@ -53,7 +58,7 @@ export function WizardNavigation({
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-civic px-5 py-2 text-sm font-semibold text-white hover:bg-civic/90"
         >
           {t("common.next")}
-          <ArrowRight aria-hidden="true" size={18} />
+          <NextIcon aria-hidden="true" size={18} />
         </button>
       )}
     </div>

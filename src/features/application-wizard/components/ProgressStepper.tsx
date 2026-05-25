@@ -19,7 +19,7 @@ export function ProgressStepper({
 
   return (
     <nav
-      aria-label="Application progress"
+      aria-label={progressLabel}
       className="rounded-lg border border-slate-200 bg-white px-4 py-5 shadow-sm sm:px-6"
     >
       <div className="flex items-center justify-between gap-4">

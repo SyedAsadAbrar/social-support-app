@@ -1,4 +1,8 @@
 const defaultOpenAIModel = "gpt-4o-mini";
+const placeholderApiKeys = new Set([
+  "replace_with_your_openai_api_key",
+  "your_api_key_here"
+]);
 
 export type OpenAIConfig =
   | {
@@ -14,7 +18,7 @@ export type OpenAIConfig =
 export function getOpenAIConfig(): OpenAIConfig {
   const apiKey = process.env.OPENAI_API_KEY?.trim();
 
-  if (!apiKey) {
+  if (!apiKey || placeholderApiKeys.has(apiKey)) {
     return {
       ok: false,
       error: "missingApiKey"

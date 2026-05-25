@@ -74,6 +74,7 @@ export function TextField({
         min={min}
         max={max}
         required={required}
+        aria-required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
@@ -141,6 +142,7 @@ export function SelectField({
       <select
         id={id}
         required={required}
+        aria-required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
@@ -208,6 +210,7 @@ export function TextAreaField({
         id={id}
         rows={rows}
         required={required}
+        aria-required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)

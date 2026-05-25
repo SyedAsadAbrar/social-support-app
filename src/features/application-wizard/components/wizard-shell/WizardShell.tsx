@@ -195,6 +195,7 @@ export function WizardShell({locale}: WizardShellProps) {
             />
 
             <WizardNavigation
+              locale={locale}
               currentStep={currentStep}
               totalSteps={stepLabels.length}
               isSubmitting={isSubmitting}
