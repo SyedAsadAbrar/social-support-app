@@ -181,7 +181,11 @@ export function WizardShell({locale}: WizardShellProps) {
               stepLabels={stepLabels}
               activeErrors={activeErrors}
             >
-              <WizardStepContent currentStep={currentStep} errorText={errorText} />
+              <WizardStepContent
+                locale={locale}
+                currentStep={currentStep}
+                errorText={errorText}
+              />
             </WizardStepSection>
 
             <SubmissionFeedback

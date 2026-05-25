@@ -1,6 +1,6 @@
 "use client";
 
-import {useId} from "react";
+import {type ReactNode, useId} from "react";
 import {
   type FieldErrors,
   type Path,
@@ -24,6 +24,7 @@ type BaseFieldProps = {
   helper?: string;
   errorText: (key: string) => string;
   required?: boolean;
+  labelAction?: ReactNode;
 };
 
 type TextFieldProps = BaseFieldProps & {
@@ -178,6 +179,7 @@ export function TextAreaField({
   helper,
   rows = 5,
   required = true,
+  labelAction,
   errorText
 }: TextAreaFieldProps) {
   const id = useId();
@@ -191,14 +193,17 @@ export function TextAreaField({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-semibold text-ink" htmlFor={id}>
-        {label}
-        {required ? (
-          <span className="ml-1 text-alert" aria-label="required">
-            *
-          </span>
-        ) : null}
-      </label>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <label className="block text-sm font-semibold text-ink" htmlFor={id}>
+          {label}
+          {required ? (
+            <span className="ml-1 text-alert" aria-label="required">
+              *
+            </span>
+          ) : null}
+        </label>
+        {labelAction}
+      </div>
       <textarea
         id={id}
         rows={rows}

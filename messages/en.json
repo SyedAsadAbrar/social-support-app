@@ -122,6 +122,22 @@
       "successDescription": "Reference {applicationId} was submitted on {submittedAt}. Your local draft has been cleared.",
       "failure": "We could not submit the application right now. Please try again.",
       "invalid": "Please fix the highlighted fields before submitting."
+    },
+    "ai": {
+      "helpMeWrite": "Help me write",
+      "dialogTitle": "AI writing suggestion",
+      "dialogDescription": "Review the suggested wording before adding it to your application.",
+      "suggestionLabel": "Suggested text",
+      "accept": "Accept",
+      "edit": "Edit",
+      "discard": "Discard",
+      "retry": "Retry",
+      "loading": "Writing a suggestion...",
+      "errors": {
+        "missingKey": "AI help is not configured yet. Add an OpenAI API key and try again.",
+        "timeout": "AI help took too long to respond. Please try again.",
+        "failed": "AI help is unavailable right now. Please try again."
+      }
     }
   }
 }

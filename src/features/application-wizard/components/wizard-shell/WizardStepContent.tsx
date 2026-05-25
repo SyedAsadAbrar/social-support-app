@@ -3,13 +3,15 @@
 import {StepFamilyFinancial} from "../StepFamilyFinancial";
 import {StepPersonalInfo} from "../StepPersonalInfo";
 import {StepSituationDescriptions} from "../StepSituationDescriptions";
+import type {Locale} from "@/i18n/config";
 
 type WizardStepContentProps = {
+  locale: Locale;
   currentStep: number;
   errorText: (key: string) => string;
 };
 
-export function WizardStepContent({currentStep, errorText}: WizardStepContentProps) {
+export function WizardStepContent({locale, currentStep, errorText}: WizardStepContentProps) {
   if (currentStep === 0) {
     return <StepPersonalInfo errorText={errorText} />;
   }
@@ -18,5 +20,5 @@ export function WizardStepContent({currentStep, errorText}: WizardStepContentPro
     return <StepFamilyFinancial errorText={errorText} />;
   }
 
-  return <StepSituationDescriptions errorText={errorText} />;
+  return <StepSituationDescriptions locale={locale} errorText={errorText} />;
 }
