@@ -222,9 +222,21 @@ export function WizardShell({locale}: WizardShellProps) {
     }
   }, [currentStep, draftReady, submissionResult, submitStep, watchedDraftValues]);
 
-  function moveToStep(nextStep: number) {
+  function resetStepForm(step: number, values: ApplicationForm) {
+    const targetForm = stepForms[step];
+
+    if (!targetForm) {
+      return;
+    }
+
+    targetForm.reset(values);
+    targetForm.clearErrors();
+  }
+
+  function moveToStep(nextStep: number, values = formValues) {
     setSubmitError(null);
     hasNavigatedSteps.current = true;
+    resetStepForm(nextStep, values);
     setCurrentStep(nextStep);
   }
 
@@ -236,13 +248,13 @@ export function WizardShell({locale}: WizardShellProps) {
 
   function goNext() {
     void activeForm.handleSubmit((stepValues) => {
-      saveStepValues(stepValues);
-      moveToStep(Math.min(currentStep + 1, submitStep));
+      const nextValues = saveStepValues(stepValues);
+      moveToStep(Math.min(currentStep + 1, submitStep), nextValues);
     })();
   }
 
   function goBack() {
-    moveToStep(Math.max(currentStep - 1, 0));
+    moveToStep(Math.max(currentStep - 1, 0), watchedDraftValues);
   }
 
   function applyFullValidationErrors(issues: {path: (string | number)[]; message: string}[]) {
@@ -256,6 +268,7 @@ export function WizardShell({locale}: WizardShellProps) {
 
     const targetForm = stepForms[firstInvalidStep];
     const targetFields = new Set<ApplicationField>(stepFields[firstInvalidStep]);
+    moveToStep(firstInvalidStep, watchedDraftValues);
 
     issues.forEach((issue) => {
       const field = issue.path[0] as ApplicationField | undefined;
@@ -267,8 +280,6 @@ export function WizardShell({locale}: WizardShellProps) {
         });
       }
     });
-
-    moveToStep(firstInvalidStep);
   }
 
   async function submitApplication(values: ApplicationForm) {
@@ -336,7 +347,7 @@ export function WizardShell({locale}: WizardShellProps) {
           dir={locale === "ar" ? "rtl" : "ltr"}
         />
 
-        <FormProvider {...activeForm}>
+        <FormProvider key={currentStep} {...activeForm}>
           <form
             noValidate
             onSubmit={(event) => {
