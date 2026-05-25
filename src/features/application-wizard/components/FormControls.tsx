@@ -25,7 +25,6 @@ type BaseFieldProps = {
   errorText: (key: string) => string;
   required?: boolean;
   labelAction?: ReactNode;
-  showError?: boolean;
 };
 
 type TextFieldProps = BaseFieldProps & {
@@ -50,7 +49,6 @@ export function TextField({
   min,
   max,
   required = true,
-  showError = false,
   errorText
 }: TextFieldProps) {
   const id = useId();
@@ -59,7 +57,6 @@ export function TextField({
     formState: {errors}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
-  const visibleError = showError ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -84,8 +81,8 @@ export function TextField({
         max={max}
         required={required}
         aria-required={required}
-        aria-invalid={Boolean(visibleError)}
-        aria-describedby={[helper ? helperId : "", visibleError ? errorId : ""]
+        aria-invalid={Boolean(error)}
+        aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
         className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
@@ -104,9 +101,9 @@ export function TextField({
           {helper}
         </p>
       ) : null}
-      {visibleError?.message ? (
+      {error?.message ? (
         <p id={errorId} className="text-sm font-medium text-alert" role="alert">
-          {errorText(visibleError.message)}
+          {errorText(error.message)}
         </p>
       ) : null}
     </div>
@@ -127,7 +124,6 @@ export function SelectField({
   options,
   optionLabel,
   required = true,
-  showError = false,
   errorText
 }: SelectFieldProps) {
   const id = useId();
@@ -136,7 +132,6 @@ export function SelectField({
     formState: {errors}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
-  const visibleError = showError ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -154,8 +149,8 @@ export function SelectField({
         id={id}
         required={required}
         aria-required={required}
-        aria-invalid={Boolean(visibleError)}
-        aria-describedby={[helper ? helperId : "", visibleError ? errorId : ""]
+        aria-invalid={Boolean(error)}
+        aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
         className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
@@ -173,9 +168,9 @@ export function SelectField({
           {helper}
         </p>
       ) : null}
-      {visibleError?.message ? (
+      {error?.message ? (
         <p id={errorId} className="text-sm font-medium text-alert" role="alert">
-          {errorText(visibleError.message)}
+          {errorText(error.message)}
         </p>
       ) : null}
     </div>
@@ -193,7 +188,6 @@ export function TextAreaField({
   rows = 5,
   required = true,
   labelAction,
-  showError = false,
   errorText
 }: TextAreaFieldProps) {
   const id = useId();
@@ -202,7 +196,6 @@ export function TextAreaField({
     formState: {errors}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
-  const visibleError = showError ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -224,8 +217,8 @@ export function TextAreaField({
         rows={rows}
         required={required}
         aria-required={required}
-        aria-invalid={Boolean(visibleError)}
-        aria-describedby={[helper ? helperId : "", visibleError ? errorId : ""]
+        aria-invalid={Boolean(error)}
+        aria-describedby={[helper ? helperId : "", error ? errorId : ""]
           .filter(Boolean)
           .join(" ")}
         className="w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2.5 text-base text-ink shadow-sm transition focus:border-civic"
@@ -236,9 +229,9 @@ export function TextAreaField({
           {helper}
         </p>
       ) : null}
-      {visibleError?.message ? (
+      {error?.message ? (
         <p id={errorId} className="text-sm font-medium text-alert" role="alert">
-          {errorText(visibleError.message)}
+          {errorText(error.message)}
         </p>
       ) : null}
     </div>

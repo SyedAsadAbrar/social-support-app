@@ -12,8 +12,15 @@ import {TextAreaField} from "./FormControls";
 
 type StepProps = {
   locale: Locale;
-  showValidation: boolean;
   errorText: (key: string) => string;
+  draftContext: Pick<
+    ApplicationForm,
+    | "maritalStatus"
+    | "dependents"
+    | "employmentStatus"
+    | "monthlyIncome"
+    | "housingStatus"
+  >;
 };
 
 type SuggestionResponse = {
@@ -28,7 +35,11 @@ function isSuggestionResponse(value: unknown): value is SuggestionResponse {
   );
 }
 
-export function StepSituationDescriptions({locale, showValidation, errorText}: StepProps) {
+export function StepSituationDescriptions({
+  locale,
+  errorText,
+  draftContext
+}: StepProps) {
   const t = useTranslations("form");
   const {getValues, setValue} = useFormContext<ApplicationForm>();
   const [activeField, setActiveField] = useState<SituationField | null>(null);
@@ -64,13 +75,7 @@ export function StepSituationDescriptions({locale, showValidation, errorText}: S
         body: JSON.stringify({
           field,
           locale,
-          draft: {
-            maritalStatus: values.maritalStatus,
-            dependents: values.dependents,
-            employmentStatus: values.employmentStatus,
-            monthlyIncome: values.monthlyIncome,
-            housingStatus: values.housingStatus
-          },
+          draft: draftContext,
           currentText: currentTextOverride ?? values[field]
         }),
         signal: controller.signal
@@ -147,7 +152,6 @@ export function StepSituationDescriptions({locale, showValidation, errorText}: S
             label={t(`fields.${field}`)}
             helper={t(`helpers.${field}`)}
             rows={5}
-            showError={showValidation}
             errorText={errorText}
             labelAction={
               <button

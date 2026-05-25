@@ -1,34 +1,48 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useTranslations} from "next-intl";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {
   FormProvider,
   type FieldErrors,
+  type Resolver,
+  type UseFormReturn,
   useForm,
-  useWatch,
+  useWatch
 } from "react-hook-form";
-import type { Locale } from "@/i18n/config";
-import { clearDraft, loadDraft, saveDraft } from "@/lib/storage";
-import { defaultApplicationValues } from "../../defaults";
-import { stepFields, stepTranslationKeys } from "../../field-config";
-import { applicationSchema } from "../../schema";
-import type { ApplicationForm, ApplicationSubmissionResult } from "../../types";
-import { ProgressStepper } from "../ProgressStepper";
-import { SubmissionFeedback } from "./SubmissionFeedback";
-import { WizardHeader } from "./WizardHeader";
-import { WizardNavigation } from "./WizardNavigation";
-import { WizardStepContent } from "./WizardStepContent";
-import { WizardStepSection } from "./WizardStepSection";
+import type {Locale} from "@/i18n/config";
+import {clearDraft, loadDraft, saveDraft} from "@/lib/storage";
+import {defaultApplicationValues} from "../../defaults";
+import {
+  familyFinancialFields,
+  personalFields,
+  situationFields,
+  stepFields,
+  stepTranslationKeys
+} from "../../field-config";
+import {
+  applicationSchema,
+  familyFinancialSchema,
+  personalInfoSchema,
+  situationDescriptionsSchema
+} from "../../schema";
+import type {ApplicationForm, ApplicationSubmissionResult} from "../../types";
+import {ProgressStepper} from "../ProgressStepper";
+import {SubmissionFeedback} from "./SubmissionFeedback";
+import {WizardHeader} from "./WizardHeader";
+import {WizardNavigation} from "./WizardNavigation";
+import {WizardStepContent} from "./WizardStepContent";
+import {WizardStepSection} from "./WizardStepSection";
 
 type WizardShellProps = {
   locale: Locale;
 };
 
-function isSubmissionResult(
-  value: unknown,
-): value is ApplicationSubmissionResult {
+type ApplicationField = keyof ApplicationForm;
+type WizardForm = UseFormReturn<ApplicationForm>;
+
+function isSubmissionResult(value: unknown): value is ApplicationSubmissionResult {
   if (!value || typeof value !== "object") {
     return false;
   }
@@ -37,56 +51,142 @@ function isSubmissionResult(
   return Boolean(result.applicationId && result.submittedAt);
 }
 
-export function WizardShell({ locale }: WizardShellProps) {
+function resolverFor(schema: Parameters<typeof zodResolver>[0]) {
+  return zodResolver(schema) as Resolver<ApplicationForm>;
+}
+
+function valuesFromFields(
+  fields: readonly ApplicationField[],
+  values: readonly unknown[]
+) {
+  return fields.reduce<Partial<ApplicationForm>>((selectedValues, field, index) => {
+    selectedValues[field] = values[index] as never;
+    return selectedValues;
+  }, {});
+}
+
+function mergeFields(
+  currentValues: ApplicationForm,
+  submittedValues: ApplicationForm,
+  fields: readonly ApplicationField[]
+) {
+  const nextValues = {...currentValues};
+
+  fields.forEach((field) => {
+    nextValues[field] = submittedValues[field] as never;
+  });
+
+  return nextValues;
+}
+
+function visibleStepErrors(
+  fields: readonly ApplicationField[],
+  errors: FieldErrors<ApplicationForm>
+) {
+  return fields
+    .map((field) => ({
+      field,
+      message: errors[field]?.message
+    }))
+    .filter(
+      (item): item is {field: ApplicationField; message: string} =>
+        typeof item.message === "string"
+    );
+}
+
+export function WizardShell({locale}: WizardShellProps) {
   const t = useTranslations("form");
   const [currentStep, setCurrentStep] = useState(0);
+  const [formValues, setFormValues] = useState<ApplicationForm>(
+    defaultApplicationValues
+  );
   const [submissionResult, setSubmissionResult] =
     useState<ApplicationSubmissionResult | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
-  const [validatedSteps, setValidatedSteps] = useState<ReadonlySet<number>>(
-    () => new Set(),
-  );
   const hasNavigatedSteps = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
 
-  const methods = useForm<ApplicationForm>({
-    resolver: zodResolver(applicationSchema),
-    defaultValues: defaultApplicationValues,
+  const personalForm = useForm<ApplicationForm>({
+    resolver: resolverFor(personalInfoSchema),
+    defaultValues: formValues,
     mode: "onSubmit",
-    reValidateMode: "onSubmit",
+    reValidateMode: "onSubmit"
   });
 
-  const {
-    control,
-    formState: { errors, isSubmitting },
-    clearErrors,
-    getValues,
-    handleSubmit,
-    reset,
-    resetField,
-    setError,
-    setFocus,
-    setValue,
-  } = methods;
-  const watchedValues = useWatch({ control });
+  const familyFinancialForm = useForm<ApplicationForm>({
+    resolver: resolverFor(familyFinancialSchema),
+    defaultValues: formValues,
+    mode: "onSubmit",
+    reValidateMode: "onSubmit"
+  });
+
+  const situationForm = useForm<ApplicationForm>({
+    resolver: resolverFor(situationDescriptionsSchema),
+    defaultValues: formValues,
+    mode: "onSubmit",
+    reValidateMode: "onSubmit"
+  });
+
+  const personalWatchedValues = useWatch({
+    control: personalForm.control,
+    name: personalFields
+  });
+  const familyFinancialWatchedValues = useWatch({
+    control: familyFinancialForm.control,
+    name: familyFinancialFields
+  });
+  const situationWatchedValues = useWatch({
+    control: situationForm.control,
+    name: situationFields
+  });
+
+  const stepForms = useMemo(
+    () => [personalForm, familyFinancialForm, situationForm] as const,
+    [familyFinancialForm, personalForm, situationForm]
+  );
+  const activeFormIndex = Math.min(currentStep, stepForms.length - 1);
+  const activeForm: WizardForm = stepForms[activeFormIndex];
+  const activeFieldNames =
+    currentStep < stepFields.length ? stepFields[currentStep] : [];
 
   const stepLabels = useMemo(
     () => stepTranslationKeys.map((key) => t(`steps.${key}`)),
-    [t],
+    [t]
   );
   const submitStep = stepFields.length - 1;
   const resultStep = stepFields.length;
   const isResultStep = currentStep === resultStep;
-  const stepHeading = isResultStep
-    ? t("result.title")
-    : stepLabels[currentStep];
+  const stepHeading = isResultStep ? t("result.title") : stepLabels[currentStep];
   const stepCountLabel = isResultStep
     ? t("result.stepLabel")
     : t("common.stepCount", {
         current: currentStep + 1,
-        total: stepLabels.length,
+        total: stepLabels.length
       });
+
+  const watchedDraftValues = useMemo(
+    () => ({
+      ...formValues,
+      ...valuesFromFields(personalFields, personalWatchedValues),
+      ...valuesFromFields(familyFinancialFields, familyFinancialWatchedValues),
+      ...valuesFromFields(situationFields, situationWatchedValues)
+    }),
+    [
+      familyFinancialWatchedValues,
+      formValues,
+      personalWatchedValues,
+      situationWatchedValues
+    ]
+  );
+  const activeErrors = visibleStepErrors(activeFieldNames, activeForm.formState.errors);
+  const aiDraftContext = {
+    maritalStatus: formValues.maritalStatus,
+    dependents: formValues.dependents,
+    employmentStatus: formValues.employmentStatus,
+    monthlyIncome: formValues.monthlyIncome,
+    housingStatus: formValues.housingStatus
+  };
 
   useEffect(() => {
     if (hasNavigatedSteps.current) {
@@ -96,147 +196,99 @@ export function WizardShell({ locale }: WizardShellProps) {
 
   useEffect(() => {
     const draft = loadDraft();
-    let restoredStep = 0;
+    const restoredValues = {
+      ...defaultApplicationValues,
+      ...draft?.values
+    };
+    const restoredStep =
+      draft?.currentStep === null || draft?.currentStep === undefined
+        ? 0
+        : Math.max(0, Math.min(draft.currentStep, submitStep));
 
-    if (draft) {
-      reset({ ...defaultApplicationValues, ...draft.values });
-
-      if (draft.currentStep !== null) {
-        restoredStep = Math.max(0, Math.min(draft.currentStep, submitStep));
-      }
-    }
+    personalForm.reset(restoredValues);
+    familyFinancialForm.reset(restoredValues);
+    situationForm.reset(restoredValues);
 
     queueMicrotask(() => {
+      setFormValues(restoredValues);
       setCurrentStep(restoredStep);
       setDraftReady(true);
     });
-  }, [reset, submitStep]);
+  }, [familyFinancialForm, personalForm, situationForm, submitStep]);
 
   useEffect(() => {
     if (draftReady && !submissionResult && currentStep <= submitStep) {
-      saveDraft(watchedValues, currentStep);
+      saveDraft(watchedDraftValues, currentStep);
     }
-  }, [currentStep, draftReady, submissionResult, submitStep, watchedValues]);
-
-  const activeFieldNames =
-    currentStep < stepFields.length ? stepFields[currentStep] : [];
-  const showValidation = validatedSteps.has(currentStep);
-  const activeErrors = activeFieldNames
-    .map((field) => ({
-      field,
-      message: errors[field]?.message,
-    }))
-    .filter(
-      (item): item is { field: keyof ApplicationForm; message: string } =>
-        showValidation && Boolean(item.message),
-    );
-
-  function markStepValidated(step: number) {
-    setValidatedSteps((steps) => new Set(steps).add(step));
-  }
-
-  function markStepInteraction(step: number) {
-    markStepValidated(step);
-
-    if (step < stepFields.length) {
-      stepFields[step].forEach((field) => {
-        setValue(field, getValues(field), {
-          shouldDirty: false,
-          shouldTouch: true,
-          shouldValidate: false,
-        });
-      });
-    }
-  }
-
-  function clearStepInteraction(step: number) {
-    setValidatedSteps((steps) => {
-      const nextSteps = new Set(steps);
-      nextSteps.delete(step);
-      return nextSteps;
-    });
-
-    if (step < stepFields.length) {
-      stepFields[step].forEach((field) => {
-        resetField(field, {
-          defaultValue: getValues(field),
-          keepDirty: true,
-        });
-      });
-    }
-  }
+  }, [currentStep, draftReady, submissionResult, submitStep, watchedDraftValues]);
 
   function moveToStep(nextStep: number) {
-    markStepInteraction(currentStep);
-    clearStepInteraction(nextStep);
+    setSubmitError(null);
+    hasNavigatedSteps.current = true;
     setCurrentStep(nextStep);
   }
 
-  function validateCurrentStep() {
-    clearErrors(activeFieldNames);
-
-    const validation = applicationSchema.safeParse(getValues());
-    if (validation.success) {
-      return true;
-    }
-
-    const activeFieldSet = new Set<keyof ApplicationForm>(activeFieldNames);
-    const fieldErrors = new Map<keyof ApplicationForm, string>();
-
-    validation.error.issues.forEach((issue) => {
-      const field = issue.path[0] as keyof ApplicationForm | undefined;
-
-      if (field && activeFieldSet.has(field) && !fieldErrors.has(field)) {
-        fieldErrors.set(field, issue.message);
-      }
-    });
-
-    fieldErrors.forEach((message, field) => {
-      setError(field, {
-        type: "manual",
-        message,
-      });
-    });
-
-    const [firstInvalidField] = fieldErrors.keys();
-    if (firstInvalidField) {
-      setFocus(firstInvalidField);
-    }
-
-    return fieldErrors.size === 0;
+  function saveStepValues(stepValues: ApplicationForm) {
+    const nextValues = mergeFields(formValues, stepValues, activeFieldNames);
+    setFormValues(nextValues);
+    return nextValues;
   }
 
   function goNext() {
-    const valid = validateCurrentStep();
-    if (valid) {
-      const nextStep = Math.min(currentStep + 1, stepLabels.length - 1);
-      setSubmitError(null);
-      hasNavigatedSteps.current = true;
-      moveToStep(nextStep);
-    } else {
-      markStepInteraction(currentStep);
-    }
+    void activeForm.handleSubmit((stepValues) => {
+      saveStepValues(stepValues);
+      moveToStep(Math.min(currentStep + 1, submitStep));
+    })();
   }
 
   function goBack() {
-    const previousStep = Math.max(currentStep - 1, 0);
-    setSubmitError(null);
-    hasNavigatedSteps.current = true;
-    clearStepInteraction(previousStep);
-    setCurrentStep(previousStep);
+    moveToStep(Math.max(currentStep - 1, 0));
+  }
+
+  function applyFullValidationErrors(issues: {path: (string | number)[]; message: string}[]) {
+    const firstInvalidStep = stepFields.findIndex((fields) =>
+      fields.some((field) => issues.some((issue) => issue.path[0] === field))
+    );
+
+    if (firstInvalidStep < 0) {
+      return;
+    }
+
+    const targetForm = stepForms[firstInvalidStep];
+    const targetFields = new Set<ApplicationField>(stepFields[firstInvalidStep]);
+
+    issues.forEach((issue) => {
+      const field = issue.path[0] as ApplicationField | undefined;
+
+      if (field && targetFields.has(field)) {
+        targetForm.setError(field, {
+          type: "manual",
+          message: issue.message
+        });
+      }
+    });
+
+    moveToStep(firstInvalidStep);
   }
 
   async function submitApplication(values: ApplicationForm) {
     setSubmitError(null);
     setSubmissionResult(null);
 
+    const validation = applicationSchema.safeParse(values);
+    if (!validation.success) {
+      applyFullValidationErrors(validation.error.issues);
+      setSubmitError(t("submit.invalid"));
+      return;
+    }
+
     try {
       const response = await fetch("/api/applications", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(validation.data)
       });
       const payload = (await response.json()) as unknown;
 
@@ -253,26 +305,19 @@ export function WizardShell({ locale }: WizardShellProps) {
     }
   }
 
-  function handleInvalidSubmit(submitErrors: FieldErrors<ApplicationForm>) {
-    const firstInvalidStep = stepFields.findIndex((fields) =>
-      fields.some((field) => Boolean(submitErrors[field])),
-    );
-
-    if (firstInvalidStep >= 0) {
-      markStepInteraction(firstInvalidStep);
-      setCurrentStep(firstInvalidStep);
-    }
-
-    setSubmissionResult(null);
-    setSubmitError(t("submit.invalid"));
+  function submitSituationStep(stepValues: ApplicationForm) {
+    const nextValues = saveStepValues(stepValues);
+    void submitApplication(nextValues);
   }
 
   const errorText = (key: string) => t(`errors.${key}`);
 
   function startNewApplication() {
     clearDraft();
-    reset(defaultApplicationValues);
-    setValidatedSteps(new Set());
+    setFormValues(defaultApplicationValues);
+    personalForm.reset(defaultApplicationValues);
+    familyFinancialForm.reset(defaultApplicationValues);
+    situationForm.reset(defaultApplicationValues);
     setSubmissionResult(null);
     setSubmitError(null);
     hasNavigatedSteps.current = true;
@@ -291,12 +336,18 @@ export function WizardShell({ locale }: WizardShellProps) {
           dir={locale === "ar" ? "rtl" : "ltr"}
         />
 
-        <FormProvider {...methods}>
+        <FormProvider {...activeForm}>
           <form
             noValidate
             onSubmit={(event) => {
-              hasNavigatedSteps.current = true;
-              void handleSubmit(submitApplication, handleInvalidSubmit)(event);
+              if (currentStep === submitStep) {
+                hasNavigatedSteps.current = true;
+                void situationForm.handleSubmit(submitSituationStep)(event);
+                return;
+              }
+
+              event.preventDefault();
+              goNext();
             }}
             className="grid gap-6 rounded-lg border border-slate-200 bg-white p-4 shadow-panel sm:p-6 lg:p-8"
           >
@@ -309,7 +360,7 @@ export function WizardShell({ locale }: WizardShellProps) {
               <WizardStepContent
                 locale={locale}
                 currentStep={currentStep}
-                showValidation={showValidation}
+                draftContext={aiDraftContext}
                 errorText={errorText}
                 submissionResult={submissionResult}
                 onStartNew={startNewApplication}
@@ -323,7 +374,7 @@ export function WizardShell({ locale }: WizardShellProps) {
               currentStep={currentStep}
               submitStep={submitStep}
               resultStep={resultStep}
-              isSubmitting={isSubmitting}
+              isSubmitting={activeForm.formState.isSubmitting}
               onBack={goBack}
               onNext={goNext}
             />

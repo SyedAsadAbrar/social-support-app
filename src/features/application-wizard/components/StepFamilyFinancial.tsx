@@ -9,11 +9,12 @@ import {
 import {SelectField, TextField} from "./FormControls";
 
 type StepProps = {
-  showValidation: boolean;
   errorText: (key: string) => string;
 };
 
-export function StepFamilyFinancial({showValidation, errorText}: StepProps) {
+export function StepFamilyFinancial({
+  errorText
+}: StepProps) {
   const t = useTranslations("form");
 
   return (
@@ -25,7 +26,6 @@ export function StepFamilyFinancial({showValidation, errorText}: StepProps) {
         placeholder={t("common.select")}
         options={maritalStatusOptions}
         optionLabel={(value) => t(`options.maritalStatus.${value}`)}
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
@@ -35,7 +35,6 @@ export function StepFamilyFinancial({showValidation, errorText}: StepProps) {
         inputMode="numeric"
         min="0"
         helper={t("helpers.dependents")}
-        showError={showValidation}
         errorText={errorText}
       />
       <SelectField
@@ -44,7 +43,6 @@ export function StepFamilyFinancial({showValidation, errorText}: StepProps) {
         placeholder={t("common.select")}
         options={employmentStatusOptions}
         optionLabel={(value) => t(`options.employmentStatus.${value}`)}
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
@@ -53,7 +51,6 @@ export function StepFamilyFinancial({showValidation, errorText}: StepProps) {
         type="number"
         inputMode="decimal"
         helper={t("helpers.monthlyIncome")}
-        showError={showValidation}
         errorText={errorText}
       />
       <SelectField
@@ -62,7 +59,6 @@ export function StepFamilyFinancial({showValidation, errorText}: StepProps) {
         placeholder={t("common.select")}
         options={housingStatusOptions}
         optionLabel={(value) => t(`options.housingStatus.${value}`)}
-        showError={showValidation}
         errorText={errorText}
       />
     </fieldset>

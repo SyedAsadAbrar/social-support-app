@@ -4,14 +4,21 @@ import {StepFamilyFinancial} from "../StepFamilyFinancial";
 import {StepPersonalInfo} from "../StepPersonalInfo";
 import {StepSituationDescriptions} from "../StepSituationDescriptions";
 import type {Locale} from "@/i18n/config";
-import type {ApplicationSubmissionResult} from "../../types";
+import type {ApplicationForm, ApplicationSubmissionResult} from "../../types";
 import {SubmissionResultStep} from "./SubmissionResultStep";
 
 type WizardStepContentProps = {
   locale: Locale;
   currentStep: number;
-  showValidation: boolean;
   errorText: (key: string) => string;
+  draftContext: Pick<
+    ApplicationForm,
+    | "maritalStatus"
+    | "dependents"
+    | "employmentStatus"
+    | "monthlyIncome"
+    | "housingStatus"
+  >;
   submissionResult: ApplicationSubmissionResult | null;
   onStartNew: () => void;
 };
@@ -19,8 +26,8 @@ type WizardStepContentProps = {
 export function WizardStepContent({
   locale,
   currentStep,
-  showValidation,
   errorText,
+  draftContext,
   submissionResult,
   onStartNew
 }: WizardStepContentProps) {
@@ -28,7 +35,6 @@ export function WizardStepContent({
     return (
       <StepPersonalInfo
         locale={locale}
-        showValidation={showValidation}
         errorText={errorText}
       />
     );
@@ -37,7 +43,6 @@ export function WizardStepContent({
   if (currentStep === 1) {
     return (
       <StepFamilyFinancial
-        showValidation={showValidation}
         errorText={errorText}
       />
     );
@@ -47,7 +52,7 @@ export function WizardStepContent({
     return (
       <StepSituationDescriptions
         locale={locale}
-        showValidation={showValidation}
+        draftContext={draftContext}
         errorText={errorText}
       />
     );

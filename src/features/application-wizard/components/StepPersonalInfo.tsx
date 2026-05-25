@@ -7,11 +7,13 @@ import {SelectField, TextField} from "./FormControls";
 
 type StepProps = {
   locale: Locale;
-  showValidation: boolean;
   errorText: (key: string) => string;
 };
 
-export function StepPersonalInfo({locale, showValidation, errorText}: StepProps) {
+export function StepPersonalInfo({
+  locale,
+  errorText
+}: StepProps) {
   const t = useTranslations("form");
   const dir = locale === "ar" ? "rtl" : "ltr";
   const yesterday = new Date();
@@ -25,14 +27,12 @@ export function StepPersonalInfo({locale, showValidation, errorText}: StepProps)
         name="name"
         label={t("fields.name")}
         autoComplete="name"
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
         name="nationalId"
         label={t("fields.nationalId")}
         helper={t("helpers.nationalId")}
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
@@ -42,7 +42,6 @@ export function StepPersonalInfo({locale, showValidation, errorText}: StepProps)
         lang={locale}
         dir={dir}
         max={maxDateOfBirth}
-        showError={showValidation}
         errorText={errorText}
       />
       <SelectField
@@ -51,7 +50,6 @@ export function StepPersonalInfo({locale, showValidation, errorText}: StepProps)
         placeholder={t("common.select")}
         options={genderOptions}
         optionLabel={(value) => t(`options.gender.${value}`)}
-        showError={showValidation}
         errorText={errorText}
       />
       <div className="md:col-span-2">
@@ -59,7 +57,6 @@ export function StepPersonalInfo({locale, showValidation, errorText}: StepProps)
           name="address"
           label={t("fields.address")}
           autoComplete="street-address"
-          showError={showValidation}
           errorText={errorText}
         />
       </div>
@@ -67,21 +64,18 @@ export function StepPersonalInfo({locale, showValidation, errorText}: StepProps)
         name="city"
         label={t("fields.city")}
         autoComplete="address-level2"
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
         name="state"
         label={t("fields.state")}
         autoComplete="address-level1"
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
         name="country"
         label={t("fields.country")}
         autoComplete="country-name"
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
@@ -90,7 +84,6 @@ export function StepPersonalInfo({locale, showValidation, errorText}: StepProps)
         type="tel"
         inputMode="tel"
         autoComplete="tel"
-        showError={showValidation}
         errorText={errorText}
       />
       <TextField
@@ -99,7 +92,6 @@ export function StepPersonalInfo({locale, showValidation, errorText}: StepProps)
         type="email"
         inputMode="email"
         autoComplete="email"
-        showError={showValidation}
         errorText={errorText}
       />
     </fieldset>

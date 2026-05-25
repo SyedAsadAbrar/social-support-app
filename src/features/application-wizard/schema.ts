@@ -72,4 +72,31 @@ export const applicationSchema = z.object({
   reasonForApplying: situationText
 });
 
+export const personalInfoSchema = applicationSchema.pick({
+  name: true,
+  nationalId: true,
+  dateOfBirth: true,
+  gender: true,
+  address: true,
+  city: true,
+  state: true,
+  country: true,
+  phone: true,
+  email: true
+});
+
+export const familyFinancialSchema = applicationSchema.pick({
+  maritalStatus: true,
+  dependents: true,
+  employmentStatus: true,
+  monthlyIncome: true,
+  housingStatus: true
+});
+
+export const situationDescriptionsSchema = applicationSchema.pick({
+  financialSituation: true,
+  employmentCircumstances: true,
+  reasonForApplying: true
+});
+
 export type ValidApplicationForm = z.output<typeof applicationSchema>;
