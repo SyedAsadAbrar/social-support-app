@@ -14,7 +14,7 @@ Completed:
 - Core dependencies for later form, validation, AI, and testing phases
 - Phase 2 form domain model, Zod schema, step metadata, wizard shell, progress indicator, active-step validation, focus handling, and error summary
 - Phase 3 responsive Step 1, Step 2, and Step 3 form fields with localized labels, helpers, options, and field-level validation messages
-- Phase 4 versioned `localStorage` draft persistence with restore-on-load autosave
+- Phase 4 versioned `localStorage` draft persistence with restore-on-load autosave for form values and current wizard step
 - Localized responsive landing page at `/en` and `/ar` with a start application CTA
 - Phase 5 mock submission API at `/api/applications` with server-side validation, localized success/failure states, and draft clearing after successful submit
 - Phase 6 OpenAI suggestion API at `/api/ai/suggest` with server-only API key usage, non-sensitive draft context, request validation, configurable model, and timeout/error handling

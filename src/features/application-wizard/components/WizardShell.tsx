@@ -40,7 +40,7 @@ export function WizardShell({locale}: WizardShellProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const hasLoadedDraft = useRef(false);
+  const [draftReady, setDraftReady] = useState(false);
   const hasNavigatedSteps = useRef(false);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
 
@@ -72,18 +72,27 @@ export function WizardShell({locale}: WizardShellProps) {
 
   useEffect(() => {
     const draft = loadDraft();
+    let restoredStep = 0;
+
     if (draft) {
-      reset({...defaultApplicationValues, ...draft});
+      reset({...defaultApplicationValues, ...draft.values});
+
+      if (draft.currentStep !== null) {
+        restoredStep = Math.max(0, Math.min(draft.currentStep, stepTranslationKeys.length - 1));
+      }
     }
 
-    hasLoadedDraft.current = true;
+    queueMicrotask(() => {
+      setCurrentStep(restoredStep);
+      setDraftReady(true);
+    });
   }, [reset]);
 
   useEffect(() => {
-    if (hasLoadedDraft.current) {
-      saveDraft(watchedValues);
+    if (draftReady) {
+      saveDraft(watchedValues, currentStep);
     }
-  }, [watchedValues]);
+  }, [currentStep, draftReady, watchedValues]);
 
   const activeFieldNames = stepFields[currentStep];
   const activeErrors = activeFieldNames
