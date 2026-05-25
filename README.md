@@ -17,10 +17,11 @@ Completed:
 - Phase 4 versioned `localStorage` draft persistence with restore-on-load autosave
 - Localized responsive landing page at `/en` and `/ar` with a start application CTA
 - Phase 5 mock submission API at `/api/applications` with server-side validation, localized success/failure states, and draft clearing after successful submit
+- Phase 6 OpenAI suggestion API at `/api/ai/suggest` with server-only API key usage, non-sensitive draft context, request validation, configurable model, and timeout/error handling
 
 Not implemented yet:
 
-- OpenAI suggestion API
+- AI suggestion buttons and modal UI
 - Wizard tests
 
 ## Run Locally
@@ -35,13 +36,13 @@ Then open:
 - `http://localhost:3000/en/apply`
 - `http://localhost:3000/ar/apply`
 
-## Environment
+## OpenAI Environment
 
-The OpenAI integration is planned for a later phase. When that phase is added, create `.env.local`:
+Create `.env.local` for AI suggestions:
 
 ```bash
 OPENAI_API_KEY=your_api_key_here
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-Do not expose the API key through `NEXT_PUBLIC_` variables.
+Do not expose the API key through `NEXT_PUBLIC_` variables. `OPENAI_MODEL` is optional; it defaults to `gpt-4o-mini`. If an evaluator requires the case-study model exactly, set `OPENAI_MODEL=gpt-3.5-turbo`.
