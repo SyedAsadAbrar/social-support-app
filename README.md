@@ -51,16 +51,32 @@ Then open:
 
 If port `3000` is already in use, Next.js will print the alternate local URL.
 
-## OpenAI Setup
+## Environment Variables
 
-Create `.env.local`:
+Create a local environment file in the project root:
+
+```bash
+touch .env.local
+```
+
+Add:
 
 ```bash
 OPENAI_API_KEY=your_api_key_here
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-The API key is read only on the server. Do not expose it through `NEXT_PUBLIC_` variables.
+Restart the dev server after changing `.env.local`.
+
+## OpenAI Setup
+
+The AI writing helper is implemented through the server route:
+
+```txt
+POST /api/ai/suggest
+```
+
+The browser never receives the OpenAI API key. The key is read from `OPENAI_API_KEY` on the server only. Do not expose it through `NEXT_PUBLIC_` variables.
 
 `OPENAI_MODEL` is optional and defaults to `gpt-4o-mini`. If an evaluator requires the original case-study model exactly, set:
 
@@ -82,6 +98,24 @@ The wizard uses a parent shell plus three step-level forms.
 - Local draft storage lives in `src/lib/storage.ts` under `social-support-application:*` keys.
 - OpenAI configuration is isolated in `src/lib/env.ts` and generation logic in `src/lib/openai.ts`.
 - The AI route accepts only non-sensitive family/financial context and excludes National ID, address, phone, and email.
+
+## Decisions And Improvements
+
+Key decisions:
+
+- Next.js was used instead of plain React so the project can keep API routes, routing, localization, and server-only OpenAI access in one codebase.
+- `next-intl` was used instead of React i18next because it integrates cleanly with App Router locale segments like `/en` and `/ar`.
+- Step-level React Hook Form instances were chosen so each step validates only its own fields. The final submit still validates the full application payload.
+- Local component state is used for wizard orchestration because the flow is contained within one screen. Redux would be unnecessary overhead for this scope.
+- Drafts are stored only in the browser and are cleared after successful completion.
+
+Possible improvements:
+
+- Add end-to-end tests for the full English and Arabic wizard flow.
+- Add a review step before submission if applicants need to confirm all answers.
+- Add stronger production-grade security, rate limiting, audit logging, and server-side persistence.
+- Replace mock submission with a real backend integration.
+- Add analytics around drop-off points and AI suggestion acceptance rates.
 
 ## Project Structure
 

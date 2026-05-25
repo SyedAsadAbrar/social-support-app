@@ -171,6 +171,7 @@ export function StepSituationDescriptions({
 
       <AiSuggestionDialog
         open={Boolean(activeField)}
+        locale={locale}
         fieldLabel={activeFieldLabel}
         suggestion={suggestion}
         status={status}
