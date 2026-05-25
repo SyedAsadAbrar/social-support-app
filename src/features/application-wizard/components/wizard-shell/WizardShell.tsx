@@ -79,20 +79,26 @@ export function WizardShell({locale}: WizardShellProps) {
   useEffect(() => {
     const draft = loadDraft();
     let restoredStep = 0;
+    let restoredSubmissionResult: ApplicationSubmissionResult | null = null;
 
     if (draft) {
       reset({...defaultApplicationValues, ...draft.values});
+      restoredSubmissionResult = draft.submissionResult;
 
       if (draft.currentStep !== null) {
-        restoredStep = Math.max(0, Math.min(draft.currentStep, submitStep));
+        restoredStep = Math.max(
+          0,
+          Math.min(draft.currentStep, restoredSubmissionResult ? resultStep : submitStep)
+        );
       }
     }
 
     queueMicrotask(() => {
+      setSubmissionResult(restoredSubmissionResult);
       setCurrentStep(restoredStep);
       setDraftReady(true);
     });
-  }, [reset, submitStep]);
+  }, [reset, resultStep, submitStep]);
 
   useEffect(() => {
     if (draftReady && !submissionResult && currentStep <= submitStep) {
@@ -144,6 +150,7 @@ export function WizardShell({locale}: WizardShellProps) {
       }
 
       clearDraft();
+      saveDraft(defaultApplicationValues, resultStep, payload);
       setSubmissionResult(payload);
       hasNavigatedSteps.current = true;
       setCurrentStep(resultStep);
