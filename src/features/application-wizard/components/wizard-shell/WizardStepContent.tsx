@@ -23,7 +23,7 @@ export function WizardStepContent({
   onStartNew
 }: WizardStepContentProps) {
   if (currentStep === 0) {
-    return <StepPersonalInfo errorText={errorText} />;
+    return <StepPersonalInfo locale={locale} errorText={errorText} />;
   }
 
   if (currentStep === 1) {

@@ -1,15 +1,18 @@
 "use client";
 
 import {useTranslations} from "next-intl";
+import type {Locale} from "@/i18n/config";
 import {genderOptions} from "../field-config";
 import {SelectField, TextField} from "./FormControls";
 
 type StepProps = {
+  locale: Locale;
   errorText: (key: string) => string;
 };
 
-export function StepPersonalInfo({errorText}: StepProps) {
+export function StepPersonalInfo({locale, errorText}: StepProps) {
   const t = useTranslations("form");
+  const dir = locale === "ar" ? "rtl" : "ltr";
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   const maxDateOfBirth = yesterday.toISOString().slice(0, 10);
@@ -33,6 +36,8 @@ export function StepPersonalInfo({errorText}: StepProps) {
         name="dateOfBirth"
         label={t("fields.dateOfBirth")}
         type="date"
+        lang={locale}
+        dir={dir}
         max={maxDateOfBirth}
         errorText={errorText}
       />

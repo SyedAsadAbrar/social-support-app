@@ -1,4 +1,4 @@
-import {ArrowRight, CheckCircle2, Clock3, Languages, ShieldCheck} from "lucide-react";
+import {ArrowLeft, ArrowRight, CheckCircle2, Clock3, Languages, ShieldCheck} from "lucide-react";
 import Link from "next/link";
 import {getTranslations, setRequestLocale} from "next-intl/server";
 import type {Locale} from "@/i18n/config";
@@ -16,6 +16,7 @@ export default async function LandingPage({params}: LandingPageProps) {
 
   const t = await getTranslations("landing");
   const otherLocale = locale === "en" ? "ar" : "en";
+  const StartArrow = locale === "ar" ? ArrowLeft : ArrowRight;
 
   const highlights = [
     {
@@ -74,7 +75,7 @@ export default async function LandingPage({params}: LandingPageProps) {
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-white px-5 py-3 text-base font-bold text-civicDark shadow-lg transition hover:bg-mist"
               >
                 {t("start")}
-                <ArrowRight aria-hidden="true" size={19} />
+                <StartArrow aria-hidden="true" size={19} />
               </Link>
               <a
                 href="#overview"

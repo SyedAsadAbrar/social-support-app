@@ -31,6 +31,8 @@ type TextFieldProps = BaseFieldProps & {
   type?: "text" | "email" | "tel" | "date" | "number";
   autoComplete?: string;
   inputMode?: "text" | "email" | "tel" | "numeric" | "decimal";
+  lang?: string;
+  dir?: "ltr" | "rtl";
   min?: string;
   max?: string;
 };
@@ -42,6 +44,8 @@ export function TextField({
   type = "text",
   autoComplete,
   inputMode,
+  lang,
+  dir,
   min,
   max,
   required = true,
@@ -71,6 +75,8 @@ export function TextField({
         type={type}
         autoComplete={autoComplete}
         inputMode={inputMode}
+        lang={lang}
+        dir={dir}
         min={min}
         max={max}
         required={required}
