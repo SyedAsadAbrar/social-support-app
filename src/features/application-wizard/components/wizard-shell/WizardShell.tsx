@@ -53,9 +53,11 @@ export function WizardShell({locale}: WizardShellProps) {
     control,
     formState: {errors, isSubmitting},
     clearErrors,
+    getValues,
     handleSubmit,
     reset,
-    trigger
+    setError,
+    setFocus
   } = methods;
   const watchedValues = useWatch({control});
 
@@ -132,9 +134,43 @@ export function WizardShell({locale}: WizardShellProps) {
     }
   }
 
-  async function goNext() {
+  function validateCurrentStep() {
+    clearErrors(activeFieldNames);
+
+    const validation = applicationSchema.safeParse(getValues());
+    if (validation.success) {
+      return true;
+    }
+
+    const activeFieldSet = new Set<keyof ApplicationForm>(activeFieldNames);
+    const fieldErrors = new Map<keyof ApplicationForm, string>();
+
+    validation.error.issues.forEach((issue) => {
+      const field = issue.path[0] as keyof ApplicationForm | undefined;
+
+      if (field && activeFieldSet.has(field) && !fieldErrors.has(field)) {
+        fieldErrors.set(field, issue.message);
+      }
+    });
+
+    fieldErrors.forEach((message, field) => {
+      setError(field, {
+        type: "manual",
+        message
+      });
+    });
+
+    const [firstInvalidField] = fieldErrors.keys();
+    if (firstInvalidField) {
+      setFocus(firstInvalidField);
+    }
+
+    return fieldErrors.size === 0;
+  }
+
+  function goNext() {
     markStepValidated(currentStep);
-    const valid = await trigger(activeFieldNames, {shouldFocus: true});
+    const valid = validateCurrentStep();
     if (valid) {
       const nextStep = Math.min(currentStep + 1, stepLabels.length - 1);
       setSubmitError(null);
