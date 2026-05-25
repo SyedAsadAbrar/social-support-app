@@ -64,8 +64,10 @@ export function WizardShell({ locale }: WizardShellProps) {
     getValues,
     handleSubmit,
     reset,
+    resetField,
     setError,
     setFocus,
+    setValue,
   } = methods;
   const watchedValues = useWatch({ control });
 
@@ -133,22 +135,21 @@ export function WizardShell({ locale }: WizardShellProps) {
     setValidatedSteps((steps) => new Set(steps).add(step));
   }
 
-  function moveToStepWithoutValidation(nextStep: number) {
-    setValidatedSteps((steps) => {
-      const nextSteps = new Set(steps);
-      nextSteps.add(currentStep);
-      nextSteps.delete(nextStep);
-      return nextSteps;
-    });
+  function markStepInteraction(step: number) {
+    markStepValidated(step);
 
-    if (nextStep < stepFields.length) {
-      clearErrors(stepFields[nextStep]);
+    if (step < stepFields.length) {
+      stepFields[step].forEach((field) => {
+        setValue(field, getValues(field), {
+          shouldDirty: false,
+          shouldTouch: true,
+          shouldValidate: false,
+        });
+      });
     }
-
-    setCurrentStep(nextStep);
   }
 
-  function clearStepValidation(step: number) {
+  function clearStepInteraction(step: number) {
     setValidatedSteps((steps) => {
       const nextSteps = new Set(steps);
       nextSteps.delete(step);
@@ -156,8 +157,19 @@ export function WizardShell({ locale }: WizardShellProps) {
     });
 
     if (step < stepFields.length) {
-      clearErrors(stepFields[step]);
+      stepFields[step].forEach((field) => {
+        resetField(field, {
+          defaultValue: getValues(field),
+          keepDirty: true,
+        });
+      });
     }
+  }
+
+  function moveToStep(nextStep: number) {
+    markStepInteraction(currentStep);
+    clearStepInteraction(nextStep);
+    setCurrentStep(nextStep);
   }
 
   function validateCurrentStep() {
@@ -200,9 +212,9 @@ export function WizardShell({ locale }: WizardShellProps) {
       const nextStep = Math.min(currentStep + 1, stepLabels.length - 1);
       setSubmitError(null);
       hasNavigatedSteps.current = true;
-      moveToStepWithoutValidation(nextStep);
+      moveToStep(nextStep);
     } else {
-      markStepValidated(currentStep);
+      markStepInteraction(currentStep);
     }
   }
 
@@ -210,7 +222,7 @@ export function WizardShell({ locale }: WizardShellProps) {
     const previousStep = Math.max(currentStep - 1, 0);
     setSubmitError(null);
     hasNavigatedSteps.current = true;
-    clearStepValidation(previousStep);
+    clearStepInteraction(previousStep);
     setCurrentStep(previousStep);
   }
 
@@ -247,7 +259,7 @@ export function WizardShell({ locale }: WizardShellProps) {
     );
 
     if (firstInvalidStep >= 0) {
-      markStepValidated(firstInvalidStep);
+      markStepInteraction(firstInvalidStep);
       setCurrentStep(firstInvalidStep);
     }
 
