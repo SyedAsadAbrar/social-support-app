@@ -16,10 +16,10 @@ Completed:
 - Phase 3 responsive Step 1, Step 2, and Step 3 form fields with localized labels, helpers, options, and field-level validation messages
 - Phase 4 versioned `localStorage` draft persistence with restore-on-load autosave
 - Localized responsive landing page at `/en` and `/ar` with a start application CTA
+- Phase 5 mock submission API at `/api/applications` with server-side validation, localized success/failure states, and draft clearing after successful submit
 
 Not implemented yet:
 
-- Mock submission API
 - OpenAI suggestion API
 - Wizard tests
 

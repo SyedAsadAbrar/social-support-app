@@ -21,7 +21,7 @@
       },
       "secure": {
         "title": "Private by design",
-        "description": "Your draft is stored locally in your browser until the mock submission flow is added."
+        "description": "Your draft is stored locally in your browser and cleared after a successful mock submission."
       },
       "guided": {
         "title": "Ready for smart help",
@@ -41,6 +41,7 @@
     "common": {
       "back": "Back",
       "next": "Next",
+      "submit": "Submit application",
       "select": "Select an option",
       "progress": "Application progress",
       "stepCount": "Step {current} of {total}"
@@ -114,6 +115,13 @@
       "incomeRange": "Enter a realistic monthly income.",
       "descriptionTooShort": "Enter at least 30 characters.",
       "descriptionTooLong": "Keep this under 1200 characters."
+    },
+    "submit": {
+      "submitting": "Submitting...",
+      "successTitle": "Application submitted",
+      "successDescription": "Reference {applicationId} was submitted on {submittedAt}. Your local draft has been cleared.",
+      "failure": "We could not submit the application right now. Please try again.",
+      "invalid": "Please fix the highlighted fields before submitting."
     }
   }
 }
