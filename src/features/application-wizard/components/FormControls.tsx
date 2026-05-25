@@ -18,18 +18,6 @@ function fieldError(errors: FieldErrors<ApplicationForm>, name: Path<Application
   }, errors) as {message?: string} | undefined;
 }
 
-function fieldTouched(touchedFields: unknown, name: Path<ApplicationForm>) {
-  return Boolean(
-    name.split(".").reduce<unknown>((value, key) => {
-      if (value && typeof value === "object" && key in value) {
-        return (value as Record<string, unknown>)[key];
-      }
-
-      return undefined;
-    }, touchedFields)
-  );
-}
-
 type BaseFieldProps = {
   name: Path<ApplicationForm>;
   label: string;
@@ -68,10 +56,10 @@ export function TextField({
   const id = useId();
   const {
     register,
-    formState: {errors, touchedFields}
+    formState: {errors}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
-  const visibleError = showError || fieldTouched(touchedFields, name) ? error : undefined;
+  const visibleError = showError ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -145,10 +133,10 @@ export function SelectField({
   const id = useId();
   const {
     register,
-    formState: {errors, touchedFields}
+    formState: {errors}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
-  const visibleError = showError || fieldTouched(touchedFields, name) ? error : undefined;
+  const visibleError = showError ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
@@ -211,10 +199,10 @@ export function TextAreaField({
   const id = useId();
   const {
     register,
-    formState: {errors, touchedFields}
+    formState: {errors}
   } = useFormContext<ApplicationForm>();
   const error = fieldError(errors, name);
-  const visibleError = showError || fieldTouched(touchedFields, name) ? error : undefined;
+  const visibleError = showError ? error : undefined;
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 

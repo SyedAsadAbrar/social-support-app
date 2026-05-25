@@ -21,7 +21,6 @@ Completed:
 - Phase 7 AI suggestion UI for Step 3 with Help Me Write buttons, loading/error states, retry, editable suggestions, accept, and discard actions
 - Phase 8 accessibility and UX polish for localized progress semantics, required field ARIA, RTL navigation icons, AI request cancellation, and safer local env placeholders
 - Submission confirmation now appears as a dedicated final wizard step instead of inline feedback
-- Post-submit result state is restorable without keeping the submitted application draft in local storage
 
 Not implemented yet:
 

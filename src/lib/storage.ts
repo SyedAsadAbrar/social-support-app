@@ -1,22 +1,18 @@
-import type {
-  ApplicationForm,
-  ApplicationSubmissionResult
-} from "@/features/application-wizard/types";
+import type {ApplicationForm} from "@/features/application-wizard/types";
 
 export const draftStorageKey = "social-support-application:v1";
+const storageKeyPrefix = "social-support-application:";
 
 type StoredDraft = {
   version: 1;
   values: Partial<ApplicationForm>;
   currentStep?: number;
-  submissionResult?: ApplicationSubmissionResult;
   savedAt: string;
 };
 
 export type DraftSnapshot = {
   values: Partial<ApplicationForm>;
   currentStep: number | null;
-  submissionResult: ApplicationSubmissionResult | null;
 };
 
 function isStoredDraft(value: unknown): value is StoredDraft {
@@ -26,15 +22,6 @@ function isStoredDraft(value: unknown): value is StoredDraft {
 
   const candidate = value as Partial<StoredDraft>;
   return candidate.version === 1 && Boolean(candidate.values);
-}
-
-function isSubmissionResult(value: unknown): value is ApplicationSubmissionResult {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const candidate = value as Partial<ApplicationSubmissionResult>;
-  return Boolean(candidate.applicationId && candidate.submittedAt);
 }
 
 export function loadDraft(): DraftSnapshot | null {
@@ -53,15 +40,17 @@ export function loadDraft(): DraftSnapshot | null {
       return null;
     }
 
+    if ("submissionResult" in parsed) {
+      clearDraft();
+      return null;
+    }
+
     return {
       values: parsed.values,
       currentStep:
         typeof parsed.currentStep === "number" && Number.isInteger(parsed.currentStep)
           ? parsed.currentStep
-          : null,
-      submissionResult: isSubmissionResult(parsed.submissionResult)
-        ? parsed.submissionResult
-        : null
+          : null
     };
   } catch {
     return null;
@@ -70,8 +59,7 @@ export function loadDraft(): DraftSnapshot | null {
 
 export function saveDraft(
   values: Partial<ApplicationForm>,
-  currentStep: number,
-  submissionResult?: ApplicationSubmissionResult
+  currentStep: number
 ) {
   if (typeof window === "undefined") {
     return;
@@ -81,7 +69,6 @@ export function saveDraft(
     version: 1,
     values,
     currentStep,
-    submissionResult,
     savedAt: new Date().toISOString()
   };
 
@@ -93,5 +80,9 @@ export function clearDraft() {
     return;
   }
 
-  window.localStorage.removeItem(draftStorageKey);
+  const applicationKeys = Array.from({length: window.localStorage.length})
+    .map((_, index) => window.localStorage.key(index))
+    .filter((key): key is string => Boolean(key?.startsWith(storageKeyPrefix)));
+
+  applicationKeys.forEach((key) => window.localStorage.removeItem(key));
 }

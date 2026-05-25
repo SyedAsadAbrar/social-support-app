@@ -52,6 +52,7 @@ export function WizardShell({locale}: WizardShellProps) {
   const {
     control,
     formState: {errors, isSubmitting},
+    clearErrors,
     handleSubmit,
     reset,
     trigger
@@ -82,26 +83,20 @@ export function WizardShell({locale}: WizardShellProps) {
   useEffect(() => {
     const draft = loadDraft();
     let restoredStep = 0;
-    let restoredSubmissionResult: ApplicationSubmissionResult | null = null;
 
     if (draft) {
       reset({...defaultApplicationValues, ...draft.values});
-      restoredSubmissionResult = draft.submissionResult;
 
       if (draft.currentStep !== null) {
-        restoredStep = Math.max(
-          0,
-          Math.min(draft.currentStep, restoredSubmissionResult ? resultStep : submitStep)
-        );
+        restoredStep = Math.max(0, Math.min(draft.currentStep, submitStep));
       }
     }
 
     queueMicrotask(() => {
-      setSubmissionResult(restoredSubmissionResult);
       setCurrentStep(restoredStep);
       setDraftReady(true);
     });
-  }, [reset, resultStep, submitStep]);
+  }, [reset, submitStep]);
 
   useEffect(() => {
     if (draftReady && !submissionResult && currentStep <= submitStep) {
@@ -125,20 +120,36 @@ export function WizardShell({locale}: WizardShellProps) {
     setValidatedSteps((steps) => new Set(steps).add(step));
   }
 
+  function clearStepValidation(step: number) {
+    setValidatedSteps((steps) => {
+      const nextSteps = new Set(steps);
+      nextSteps.delete(step);
+      return nextSteps;
+    });
+
+    if (step < stepFields.length) {
+      clearErrors(stepFields[step]);
+    }
+  }
+
   async function goNext() {
     markStepValidated(currentStep);
     const valid = await trigger(activeFieldNames, {shouldFocus: true});
     if (valid) {
+      const nextStep = Math.min(currentStep + 1, stepLabels.length - 1);
       setSubmitError(null);
       hasNavigatedSteps.current = true;
-      setCurrentStep((step) => Math.min(step + 1, stepLabels.length - 1));
+      clearStepValidation(nextStep);
+      setCurrentStep(nextStep);
     }
   }
 
   function goBack() {
+    const previousStep = Math.max(currentStep - 1, 0);
     setSubmitError(null);
     hasNavigatedSteps.current = true;
-    setCurrentStep((step) => Math.max(step - 1, 0));
+    clearStepValidation(previousStep);
+    setCurrentStep(previousStep);
   }
 
   async function submitApplication(values: ApplicationForm) {
@@ -160,7 +171,6 @@ export function WizardShell({locale}: WizardShellProps) {
       }
 
       clearDraft();
-      saveDraft(defaultApplicationValues, resultStep, payload);
       setSubmissionResult(payload);
       hasNavigatedSteps.current = true;
       setCurrentStep(resultStep);
