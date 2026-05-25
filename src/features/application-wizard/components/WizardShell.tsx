@@ -1,8 +1,6 @@
 "use client";
 
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ArrowLeft, ArrowRight, CheckCircle2, Languages, LoaderCircle, Send} from "lucide-react";
-import Link from "next/link";
 import {useTranslations} from "next-intl";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {FormProvider, type FieldErrors, useForm, useWatch} from "react-hook-form";
@@ -11,34 +9,32 @@ import {clearDraft, loadDraft, saveDraft} from "@/lib/storage";
 import {defaultApplicationValues} from "../defaults";
 import {stepFields, stepTranslationKeys} from "../field-config";
 import {applicationSchema} from "../schema";
-import type {ApplicationForm} from "../types";
+import type {ApplicationForm, ApplicationSubmissionResult} from "../types";
 import {ProgressStepper} from "./ProgressStepper";
-import {StepFamilyFinancial} from "./StepFamilyFinancial";
-import {StepPersonalInfo} from "./StepPersonalInfo";
-import {StepSituationDescriptions} from "./StepSituationDescriptions";
+import {SubmissionFeedback} from "./wizard-shell/SubmissionFeedback";
+import {WizardHeader} from "./wizard-shell/WizardHeader";
+import {WizardNavigation} from "./wizard-shell/WizardNavigation";
+import {WizardStepContent} from "./wizard-shell/WizardStepContent";
+import {WizardStepSection} from "./wizard-shell/WizardStepSection";
 
 type WizardShellProps = {
   locale: Locale;
 };
 
-type SubmissionResult = {
-  applicationId: string;
-  submittedAt: string;
-};
-
-function isSubmissionResult(value: unknown): value is SubmissionResult {
+function isSubmissionResult(value: unknown): value is ApplicationSubmissionResult {
   if (!value || typeof value !== "object") {
     return false;
   }
 
-  const result = value as Partial<SubmissionResult>;
+  const result = value as Partial<ApplicationSubmissionResult>;
   return Boolean(result.applicationId && result.submittedAt);
 }
 
 export function WizardShell({locale}: WizardShellProps) {
   const t = useTranslations("form");
   const [currentStep, setCurrentStep] = useState(0);
-  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+  const [submissionResult, setSubmissionResult] =
+    useState<ApplicationSubmissionResult | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
   const hasNavigatedSteps = useRef(false);
@@ -159,38 +155,10 @@ export function WizardShell({locale}: WizardShellProps) {
 
   const errorText = (key: string) => t(`errors.${key}`);
 
-  const currentStepContent =
-    currentStep === 0 ? (
-      <StepPersonalInfo errorText={errorText} />
-    ) : currentStep === 1 ? (
-      <StepFamilyFinancial errorText={errorText} />
-    ) : (
-      <StepSituationDescriptions errorText={errorText} />
-    );
-
   return (
     <main className="min-h-screen px-4 py-5 sm:px-6 lg:px-8">
       <div className="mx-auto grid max-w-6xl gap-6">
-        <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-civic">
-              {t("eyebrow")}
-            </p>
-            <h1 className="mt-2 text-3xl font-bold text-ink sm:text-4xl">
-              {t("title")}
-            </h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-slate-700">
-              {t("description")}
-            </p>
-          </div>
-          <Link
-            href={`/${locale === "en" ? "ar" : "en"}/apply`}
-            className="inline-flex min-h-11 w-fit items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-ink shadow-sm hover:bg-slate-50"
-          >
-            <Languages aria-hidden="true" size={18} />
-            {locale === "en" ? "العربية" : "English"}
-          </Link>
-        </header>
+        <WizardHeader locale={locale} />
 
         <ProgressStepper
           currentStep={currentStep}
@@ -207,117 +175,28 @@ export function WizardShell({locale}: WizardShellProps) {
             }}
             className="grid gap-6 rounded-lg border border-slate-200 bg-white p-4 shadow-panel sm:p-6 lg:p-8"
           >
-            <section aria-labelledby="step-heading" className="grid gap-5">
-              <div>
-                <p className="text-sm font-semibold text-civic">
-                  {t("common.stepCount", {
-                    current: currentStep + 1,
-                    total: stepLabels.length
-                  })}
-                </p>
-                <h2
-                  id="step-heading"
-                  ref={stepHeadingRef}
-                  tabIndex={-1}
-                  className="mt-1 text-2xl font-bold text-ink"
-                >
-                  {stepLabels[currentStep]}
-                </h2>
-              </div>
+            <WizardStepSection
+              ref={stepHeadingRef}
+              currentStep={currentStep}
+              stepLabels={stepLabels}
+              activeErrors={activeErrors}
+            >
+              <WizardStepContent currentStep={currentStep} errorText={errorText} />
+            </WizardStepSection>
 
-              {activeErrors.length ? (
-                <div
-                  role="alert"
-                  aria-labelledby="error-summary-title"
-                  className="rounded-md border border-alert/30 bg-red-50 p-4"
-                >
-                  <h3 id="error-summary-title" className="font-semibold text-alert">
-                    {t("errors.summaryTitle")}
-                  </h3>
-                  <ul className="mt-2 list-inside list-disc text-sm text-alert">
-                    {activeErrors.map((error) => (
-                      <li key={error.field}>
-                        {t(`fields.${error.field}`)}: {t(`errors.${error.message}`)}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
+            <SubmissionFeedback
+              locale={locale}
+              result={submissionResult}
+              error={submitError}
+            />
 
-              {currentStepContent}
-            </section>
-
-            {submissionResult ? (
-              <div
-                role="status"
-                className="rounded-md border border-civic/30 bg-civicSoft p-4 text-sm leading-6 text-ink"
-              >
-                <div className="flex items-start gap-3">
-                  <CheckCircle2
-                    aria-hidden="true"
-                    className="mt-0.5 shrink-0 text-civic"
-                    size={20}
-                  />
-                  <div>
-                    <p className="font-semibold">{t("submit.successTitle")}</p>
-                    <p>
-                      {t("submit.successDescription", {
-                        applicationId: submissionResult.applicationId,
-                        submittedAt: new Intl.DateTimeFormat(locale, {
-                          dateStyle: "medium",
-                          timeStyle: "short"
-                        }).format(new Date(submissionResult.submittedAt))
-                      })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {submitError ? (
-              <div
-                role="alert"
-                className="rounded-md border border-alert/30 bg-red-50 p-4 text-sm font-medium text-alert"
-              >
-                {submitError}
-              </div>
-            ) : null}
-
-            <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <button
-                type="button"
-                onClick={goBack}
-                disabled={currentStep === 0}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-ink hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <ArrowLeft aria-hidden="true" size={18} />
-                {t("common.back")}
-              </button>
-
-              {currentStep === stepLabels.length - 1 ? (
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-civic px-5 py-2 text-sm font-semibold text-white hover:bg-civic/90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <LoaderCircle aria-hidden="true" className="animate-spin" size={18} />
-                  ) : (
-                    <Send aria-hidden="true" size={18} />
-                  )}
-                  {isSubmitting ? t("submit.submitting") : t("common.submit")}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={goNext}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-civic px-5 py-2 text-sm font-semibold text-white hover:bg-civic/90"
-                >
-                  {t("common.next")}
-                  <ArrowRight aria-hidden="true" size={18} />
-                </button>
-              )}
-            </div>
+            <WizardNavigation
+              currentStep={currentStep}
+              totalSteps={stepLabels.length}
+              isSubmitting={isSubmitting}
+              onBack={goBack}
+              onNext={goNext}
+            />
           </form>
         </FormProvider>
       </div>

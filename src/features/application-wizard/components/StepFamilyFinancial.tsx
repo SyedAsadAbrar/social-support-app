@@ -31,6 +31,7 @@ export function StepFamilyFinancial({errorText}: StepProps) {
         label={t("fields.dependents")}
         type="number"
         inputMode="numeric"
+        min="0"
         helper={t("helpers.dependents")}
         errorText={errorText}
       />

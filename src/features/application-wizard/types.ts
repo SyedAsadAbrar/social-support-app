@@ -44,3 +44,8 @@ export type ApplicationForm = {
 };
 
 export type ApplicationFormDraft = ApplicationForm;
+
+export type ApplicationSubmissionResult = {
+  applicationId: string;
+  submittedAt: string;
+};

@@ -30,6 +30,7 @@ type TextFieldProps = BaseFieldProps & {
   type?: "text" | "email" | "tel" | "date" | "number";
   autoComplete?: string;
   inputMode?: "text" | "email" | "tel" | "numeric" | "decimal";
+  min?: string;
   max?: string;
 };
 
@@ -40,6 +41,7 @@ export function TextField({
   type = "text",
   autoComplete,
   inputMode,
+  min,
   max,
   required = true,
   errorText
@@ -68,6 +70,7 @@ export function TextField({
         type={type}
         autoComplete={autoComplete}
         inputMode={inputMode}
+        min={min}
         max={max}
         required={required}
         aria-invalid={Boolean(error)}
