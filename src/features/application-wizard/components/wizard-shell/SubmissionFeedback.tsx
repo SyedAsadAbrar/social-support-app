@@ -1,5 +1,3 @@
-"use client";
-
 type SubmissionFeedbackProps = {
   error: string | null;
 };
