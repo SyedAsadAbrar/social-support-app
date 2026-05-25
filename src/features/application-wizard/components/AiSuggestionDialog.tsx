@@ -70,15 +70,14 @@ export function AiSuggestionDialog({
               </Dialog.Description>
               <p className="mt-3 text-sm font-semibold text-civic">{fieldLabel}</p>
             </div>
-            <Dialog.Close asChild>
-              <button
-                type="button"
-                className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-slate-200 text-ink hover:bg-slate-50"
-                aria-label={discardLabel}
-              >
-                <X aria-hidden="true" size={18} />
-              </button>
-            </Dialog.Close>
+            <button
+              type="button"
+              onClick={onDiscard}
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-md border border-slate-200 text-ink hover:bg-slate-50"
+              aria-label={discardLabel}
+            >
+              <X aria-hidden="true" size={18} />
+            </button>
           </div>
 
           {status === "loading" ? (
@@ -142,6 +141,14 @@ export function AiSuggestionDialog({
 
               {status === "ready" ? (
                 <>
+                  <button
+                    type="button"
+                    onClick={onRetry}
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-civic px-4 py-2 text-sm font-semibold text-civic hover:bg-civicSoft"
+                  >
+                    <RotateCcw aria-hidden="true" size={18} />
+                    {retryLabel}
+                  </button>
                   <button
                     type="button"
                     onClick={onEdit}

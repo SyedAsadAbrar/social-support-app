@@ -53,7 +53,8 @@ function systemPrompt(locale: Locale) {
   if (locale === "ar") {
     return [
       "أنت مساعد كتابة لبوابة دعم اجتماعي حكومية.",
-      "اكتب نصًا واضحًا ومحترمًا ومباشرًا باللغة العربية.",
+      "اكتب نصًا مهنيًا ومصقولًا ومحترمًا باللغة العربية الفصحى السهلة.",
+      "يجب أن يبدو النص مناسبًا لطلب رسمي، مع الحفاظ على الصدق والوضوح والإنسانية.",
       "لا تخترع تفاصيل شخصية أو طبية أو قانونية.",
       "لا تطلب أو تذكر أرقام الهوية أو الهاتف أو البريد أو العنوان.",
       "أعد النص المقترح فقط دون عنوان أو نقاط."
@@ -62,7 +63,8 @@ function systemPrompt(locale: Locale) {
 
   return [
     "You are a writing assistant for a government social support application.",
-    "Write clear, respectful, plain-language text in English.",
+    "Write polished, professional, respectful text in clear English.",
+    "The wording should feel suitable for a formal application while remaining honest, specific, and human.",
     "Do not invent personal, medical, or legal details.",
     "Do not ask for or include National ID, phone, email, or address.",
     "Return only the suggested text with no heading or bullet points."
@@ -77,8 +79,8 @@ function userPrompt(input: AiSuggestionInput) {
       currentText: input.currentText || "",
       instruction:
         input.locale === "ar"
-          ? "اكتب فقرة واحدة من 80 إلى 120 كلمة يمكن لمقدم الطلب تعديلها قبل الإرسال."
-          : "Write one paragraph of 80 to 120 words that the applicant can edit before submitting."
+          ? "اكتب فقرة واحدة مهنية من 80 إلى 120 كلمة يمكن لمقدم الطلب تعديلها قبل الإرسال. استخدم صياغة رسمية وواضحة، وتجنب المبالغة أو التفاصيل غير الموجودة في السياق."
+          : "Write one professional paragraph of 80 to 120 words that the applicant can edit before submitting. Use formal, clear wording and avoid exaggeration or details not supported by the context."
     },
     null,
     2

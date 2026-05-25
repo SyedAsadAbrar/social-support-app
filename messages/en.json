@@ -124,15 +124,15 @@
       "invalid": "Please fix the highlighted fields before submitting."
     },
     "ai": {
-      "helpMeWrite": "Help me write",
+      "helpMeWrite": "Draft professionally",
       "dialogTitle": "AI writing suggestion",
-      "dialogDescription": "Review the suggested wording before adding it to your application.",
-      "suggestionLabel": "Suggested text",
+      "dialogDescription": "Review this professionally drafted suggestion before adding it to your application.",
+      "suggestionLabel": "Professional draft",
       "accept": "Accept",
       "edit": "Edit",
       "discard": "Discard",
-      "retry": "Retry",
-      "loading": "Writing a suggestion...",
+      "retry": "Try another draft",
+      "loading": "Drafting professional wording...",
       "errors": {
         "missingKey": "AI help is not configured yet. Add an OpenAI API key and try again.",
         "timeout": "AI help took too long to respond. Please try again.",
